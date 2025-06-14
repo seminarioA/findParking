@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FindParking - Panel de Administrador</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --dark: #1a1d28;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --card-shadow: 0 10px 20px rgba(0,0,0,0.1), 0 6px 6px rgba(0,0,0,0.05);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header Styles */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            background: var(--primary);
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--card-shadow);
+        }
+
+        .logo-icon i {
+            color: white;
+            font-size: 24px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--light);
+        }
+
+        .logo-text span {
+            color: var(--primary);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px 20px;
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(67, 97, 238, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light);
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .user-status {
+            font-size: 14px;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        /* Dashboard Layout */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 992px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Stats Panel */
+        .stats-panel {
+            background: rgba(26, 29, 40, 0.7);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: var(--card-shadow);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .panel-title {
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .refresh-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .refresh-btn:hover {
+            background: var(--secondary);
+            transform: scale(1.03);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: rgba(31, 34, 48, 0.8);
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            border-left: 4px solid var(--primary);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            background: rgba(31, 34, 48, 1);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 10px 0;
+            color: var(--light);
+        }
+
+        .stat-title {
+            font-size: 16px;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-icon {
+            color: var(--primary);
+        }
+
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .trend-up {
+            color: var(--success);
+        }
+
+        .trend-down {
+            color: var(--danger);
+        }
+
+        /* Video Panel */
+        .video-panel {
+            background: rgba(26, 29, 40, 0.7);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: var(--card-shadow);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .video-container {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.3);
+            margin-top: 10px;
+            background: #000;
+        }
+
+        .video-header {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 30px;
+            font-size: 14px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .video-footer {
+            position: absolute;
+            bottom: 15px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            z-index: 10;
+        }
+
+        .video-control {
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .video-control:hover {
+            background: var(--primary);
+            transform: scale(1.1);
+        }
+
+        /* Parking Spaces */
+        .spaces-section {
+            background: rgba(26, 29, 40, 0.7);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: var(--card-shadow);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .spaces-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .space-item {
+            background: rgba(31, 34, 48, 0.8);
+            border-radius: 15px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .space-item:hover {
+            transform: translateY(-5px);
+            background: rgba(31, 34, 48, 1);
+        }
+
+        .space-status {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+        }
+
+        .space-free {
+            background: var(--success);
+            box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+        }
+
+        .space-occupied {
+            background: var(--danger);
+            box-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
+        }
+
+        .space-id {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .space-label {
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--gray);
+            font-size: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .timestamp {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 8px 15px;
+            border-radius: 30px;
+        }
+
+        .system-info {
+            display: flex;
+            gap: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(67, 97, 238, 0.2);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .logo {
+                justify-content: center;
+            }
+            
+            .dashboard {
+                gap: 15px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            footer {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .system-info {
+                justify-content: center;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-parking"></i>
+                </div>
+                <div class="logo-text">Find<span>Parking</span></div>
+            </div>
+            
+            <div class="user-info">
+                <div class="user-icon">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div class="user-details">
+                    <div class="user-name">Administrador</div>
+                    <div class="user-status">Panel de control</div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="dashboard">
+            <div class="stats-panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">Estadísticas del Estacionamiento</h2>
+                    <button class="refresh-btn" id="refresh-btn">
+                        <i class="fas fa-sync-alt"></i> Actualizar
+                    </button>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-title">
+                            <i class="fas fa-car stat-icon"></i> Espacios ocupados
+                        </div>
+                        <div class="stat-value" id="occupied-count">0</div>
+                        <div class="stat-trend trend-up">
+                            <i class="fas fa-arrow-up"></i> 12% en la última hora
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-title">
+                            <i class="fas fa-check-circle stat-icon"></i> Espacios libres
+                        </div>
+                        <div class="stat-value" id="free-count">0</div>
+                        <div class="stat-trend trend-down">
+                            <i class="fas fa-arrow-down"></i> 8% en la última hora
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-title">
+                            <i class="fas fa-percentage stat-icon"></i> Tasa de ocupación
+                        </div>
+                        <div class="stat-value" id="occupancy-rate">0%</div>
+                        <div class="stat-trend">
+                            <i class="fas fa-chart-line"></i> Promedio diario: 68%
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-title">
+                            <i class="fas fa-clock stat-icon"></i> Tiempo promedio
+                        </div>
+                        <div class="stat-value">42 min</div>
+                        <div class="stat-trend trend-down">
+                            <i class="fas fa-arrow-down"></i> 5 min menos que ayer
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="video-panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">Video en Tiempo Real</h2>
+                    <div class="video-actions">
+                        <button class="video-control">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="video-container">
+                    <div class="video-header">
+                        <i class="fas fa-video"></i> Cámara Principal - Entrada 1
+                    </div>
+                    <img src="{{ url_for('video_feed') }}" width="100%" id="live-video" />
+                    <div class="video-footer">
+                        <button class="video-control">
+                            <i class="fas fa-pause"></i>
+                        </button>
+                        <button class="video-control">
+                            <i class="fas fa-camera"></i>
+                        </button>
+                        <button class="video-control">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="spaces-section">
+            <h2 class="panel-title">Estado de Espacios</h2>
+            <div class="spaces-grid" id="spaces-grid">
+                <!-- Spaces will be generated dynamically -->
+            </div>
+        </div>
+        
+        <footer>
+            <div class="timestamp">
+                <i class="fas fa-sync-alt"></i>
+                <span>Última actualización: <span id="last-updated">cargando...</span></span>
+            </div>
+            <div class="system-info">
+                <div class="info-item">
+                    <i class="fas fa-microchip"></i> CPU: 24%
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-memory"></i> Memoria: 1.2GB
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-network-wired"></i> 45 ms
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Función para obtener la fecha y hora actual formateada
+        function getCurrentDateTime() {
+            const now = new Date();
+            return now.toLocaleTimeString('es-ES', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+        
+        // Función para actualizar las estadísticas
+        async function updateSummary() {
+            try {
+                // Actualizar marca de tiempo
+                document.getElementById('last-updated').textContent = getCurrentDateTime();
+                
+                // Obtener datos de ocupación
+                const res = await fetch("/occupancy");
+                const data = await res.json();
+                
+                // Actualizar contadores
+                document.getElementById('occupied-count').textContent = data.summary.occupied;
+                document.getElementById('free-count').textContent = data.summary.free;
+                
+                // Calcular tasa de ocupación
+                const occupancyRate = Math.round((data.summary.occupied / 12) * 100);
+                document.getElementById('occupancy-rate').textContent = `${occupancyRate}%`;
+                
+                // Actualizar la cuadrícula de espacios
+                const grid = document.getElementById("spaces-grid");
+                grid.innerHTML = '';
+                
+                for (let i = 1; i <= 12; i++) {
+                    const key = `area${i}`;
+                    const occupied = data.areas[key];
+                    
+                    const spaceItem = document.createElement("div");
+                    spaceItem.classList.add("space-item");
+                    
+                    spaceItem.innerHTML = `
+                        <div class="space-status ${occupied ? 'space-occupied' : 'space-free'}"></div>
+                        <div class="space-id">Área ${i}</div>
+                        <div class="space-label">${occupied ? 'Ocupado' : 'Libre'}</div>
+                    `;
+                    
+                    grid.appendChild(spaceItem);
+                }
+                
+            } catch (error) {
+                console.error("Error al obtener datos:", error);
+            }
+        }
+        
+        // Inicializar y configurar intervalo de actualización
+        document.addEventListener('DOMContentLoaded', () => {
+            updateSummary();
+            // Actualizar cada segundo
+            setInterval(updateSummary, 1000);
+            
+            // Configurar botón de actualización manual
+            document.getElementById('refresh-btn').addEventListener('click', updateSummary);
+            
+            // Simular datos del sistema
+            setInterval(() => {
+                const cpu = Math.floor(Math.random() * 30) + 10;
+                const memory = (Math.random() * 0.5 + 1).toFixed(1);
+                const latency = Math.floor(Math.random() * 30) + 20;
+                
+                document.querySelector('.info-item:nth-child(1)').innerHTML = 
+                    `<i class="fas fa-microchip"></i> CPU: ${cpu}%`;
+                
+                document.querySelector('.info-item:nth-child(2)').innerHTML = 
+                    `<i class="fas fa-memory"></i> Memoria: ${memory}GB`;
+                
+                document.querySelector('.info-item:nth-child(3)').innerHTML = 
+                    `<i class="fas fa-network-wired"></i> ${latency} ms`;
+            }, 5000);
+        });
+    </script>
+</body>
+</html>

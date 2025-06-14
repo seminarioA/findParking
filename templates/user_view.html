@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FindParking - Panel de Usuario</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --warning: #f8961e;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --card-shadow: 0 10px 20px rgba(0,0,0,0.05), 0 6px 6px rgba(0,0,0,0.05);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header Styles */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            background: var(--primary);
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--card-shadow);
+        }
+
+        .logo-icon i {
+            color: white;
+            font-size: 24px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .logo-text span {
+            color: var(--dark);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: white;
+            padding: 12px 20px;
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .user-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--light-gray);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .user-status {
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        /* Summary Styles */
+        .summary-section {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            flex: 1;
+            min-width: 220px;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+        }
+
+        .free-card {
+            border-left: 4px solid var(--success);
+        }
+
+        .occupied-card {
+            border-left: 4px solid var(--danger);
+        }
+
+        .total-card {
+            border-left: 4px solid var(--primary);
+        }
+
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .free-icon {
+            background: rgba(46, 204, 113, 0.2);
+            color: var(--success);
+        }
+
+        .occupied-icon {
+            background: rgba(231, 76, 60, 0.2);
+            color: var(--danger);
+        }
+
+        .total-icon {
+            background: rgba(67, 97, 238, 0.2);
+            color: var(--primary);
+        }
+
+        .card-title {
+            font-size: 16px;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .card-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        /* Grid Styles */
+        .grid-section {
+            margin-bottom: 40px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .refresh-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .refresh-btn:hover {
+            background: var(--secondary);
+            transform: scale(1.03);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .slot {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slot:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .slot::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+        }
+
+        .slot.free::before {
+            background: var(--success);
+        }
+
+        .slot.occupied::before {
+            background: var(--danger);
+        }
+
+        .slot-id {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--light-gray);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .slot-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin: 15px 0;
+        }
+
+        .slot.free .slot-icon {
+            background: rgba(46, 204, 113, 0.2);
+            color: var(--success);
+        }
+
+        .slot.occupied .slot-icon {
+            background: rgba(231, 76, 60, 0.2);
+            color: var(--danger);
+        }
+
+        .slot-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .slot-status {
+            font-size: 16px;
+            font-weight: 500;
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+
+        .slot.free .slot-status {
+            background: rgba(46, 204, 113, 0.2);
+            color: var(--success);
+        }
+
+        .slot.occupied .slot-status {
+            background: rgba(231, 76, 60, 0.2);
+            color: var(--danger);
+        }
+
+        .slot-details {
+            margin-top: 15px;
+            font-size: 14px;
+            color: var(--gray);
+            text-align: center;
+        }
+
+        /* Footer Styles */
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--gray);
+            font-size: 14px;
+            border-top: 1px solid var(--light-gray);
+            margin-top: 20px;
+        }
+
+        .timestamp {
+            display: inline-block;
+            background: rgba(0,0,0,0.05);
+            padding: 5px 15px;
+            border-radius: 20px;
+            margin-top: 10px;
+        }
+
+        /* Loading animation */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(67, 97, 238, 0.2);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .logo {
+                justify-content: center;
+            }
+            
+            .summary-section {
+                flex-direction: column;
+            }
+            
+            .grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-parking"></i>
+                </div>
+                <div class="logo-text">Find<span>Parking</span></div>
+            </div>
+            
+            <div class="user-info">
+                <div class="user-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-details">
+                    <div class="user-name">Usuario Actual</div>
+                    <div class="user-status">Panel de control</div>
+                </div>
+            </div>
+        </header>
+        
+        <section class="summary-section">
+            <div class="summary-card free-card">
+                <div class="card-header">
+                    <div class="card-icon free-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div>
+                        <div class="card-title">Espacios libres</div>
+                        <div class="card-value" id="free-count">0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="summary-card occupied-card">
+                <div class="card-header">
+                    <div class="card-icon occupied-icon">
+                        <i class="fas fa-car"></i>
+                    </div>
+                    <div>
+                        <div class="card-title">Espacios ocupados</div>
+                        <div class="card-value" id="occupied-count">0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="summary-card total-card">
+                <div class="card-header">
+                    <div class="card-icon total-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div>
+                        <div class="card-title">Espacios totales</div>
+                        <div class="card-value">12</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="grid-section">
+            <div class="section-header">
+                <h2 class="section-title">Estado de espacios de estacionamiento</h2>
+                <button class="refresh-btn" id="refresh-btn">
+                    <i class="fas fa-sync-alt"></i> Actualizar
+                </button>
+            </div>
+            
+            <div class="grid" id="grid">
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </section>
+        
+        <footer>
+            <p>Sistema de gestión de estacionamiento en tiempo real</p>
+            <div class="timestamp">Última actualización: <span id="last-updated">cargando...</span></div>
+        </footer>
+    </div>
+
+    <script>
+        // Función para obtener la fecha y hora actual formateada
+        function getCurrentDateTime() {
+            const now = new Date();
+            return now.toLocaleTimeString('es-ES', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+        
+        // Función para actualizar el estado de los espacios
+        async function fetchOccupancy() {
+            try {
+                // Mostrar estado de carga
+                const grid = document.getElementById("grid");
+                grid.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+                
+                // Obtener datos reales del endpoint
+                const res = await fetch("/occupancy");
+                const data = await res.json();
+                
+                // Actualizar marca de tiempo
+                document.getElementById('last-updated').textContent = getCurrentDateTime();
+                
+                // Actualizar contadores de resumen
+                document.getElementById('free-count').textContent = data.summary.free;
+                document.getElementById('occupied-count').textContent = data.summary.occupied;
+                
+                // Generar los espacios
+                grid.innerHTML = '';
+                
+                for (let i = 1; i <= 12; i++) {
+                    const key = `area${i}`;
+                    const occupied = data.areas[key];
+                    
+                    const slot = document.createElement("div");
+                    slot.classList.add("slot", occupied ? "occupied" : "free");
+                    
+                    slot.innerHTML = `
+                        <div class="slot-id">${i}</div>
+                        <div class="slot-icon">
+                            <i class="${occupied ? 'fas fa-car' : 'fas fa-check'}"></i>
+                        </div>
+                        <div class="slot-name">Área ${i}</div>
+                        <div class="slot-status">${occupied ? "Ocupado" : "Libre"}</div>
+                        <div class="slot-details">
+                            ${occupied ? 
+                                '<i class="fas fa-clock"></i> Ocupado' : 
+                                '<i class="fas fa-bolt"></i> Disponible'}
+                        </div>
+                    `;
+                    
+                    grid.appendChild(slot);
+                }
+                
+            } catch (error) {
+                console.error("Error al obtener datos:", error);
+                const grid = document.getElementById("grid");
+                grid.innerHTML = '<div class="error">Error al cargar datos. Intente nuevamente.</div>';
+            }
+        }
+        
+        // Inicializar y configurar intervalo de actualización
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchOccupancy();
+            setInterval(fetchOccupancy, 1000); // Actualizar cada n segundos
+            
+            // Configurar botón de actualización manual
+            document.getElementById('refresh-btn').addEventListener('click', fetchOccupancy);
+        });
+    </script>
+</body>
+</html>
