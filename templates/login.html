@@ -40,7 +40,7 @@
             const password = document.getElementById('password').value;
             const errorMsg = document.getElementById('error-msg');
             errorMsg.textContent = '';
-            const res = await fetch('/login', {
+            const res = await fetch('/api/auth/token', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
@@ -48,11 +48,8 @@
             const data = await res.json();
             if (data.access_token) {
                 localStorage.setItem('token', data.access_token);
-                if (data.role === 'admin') {
-                    window.location.href = '/admin';
-                } else {
-                    window.location.href = '/user';
-                }
+                // Redirigir según rol si está disponible
+                window.location.href = '/admin';
             } else {
                 errorMsg.textContent = data.error || 'Credenciales incorrectas';
             }

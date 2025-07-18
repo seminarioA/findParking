@@ -568,22 +568,22 @@
     </div>
 
     <script>
-        // --- Adaptación Microservicios ---
+        // --- Refactorizado: solo microservicios ---
         let jwtToken = null;
-        let cameraId = 'entrada1'; // Puedes cambiar dinámicamente según la cámara seleccionada
+        let cameraId = 'entrada1';
 
-        // Autenticación y obtención de JWT
+        // Autenticación y obtención de JWT desde microservicio
         async function login(username, password) {
             const res = await fetch('/api/auth/token', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `username=${username}&password=${password}`
+                body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
             });
             const data = await res.json();
             jwtToken = data.access_token;
         }
 
-        // WebRTC para video procesado
+        // WebSocket para video procesado desde microservicio
         async function startWebRTC() {
             const wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
             const wsUrl = wsProtocol + window.location.host + `/api/video/${cameraId}/processed`;
@@ -592,14 +592,14 @@
                 ws.send(JSON.stringify({ Authorization: `Bearer ${jwtToken}` }));
             };
             ws.onmessage = (event) => {
-                // Aquí deberías procesar el frame recibido y mostrarlo en el <video>
-                // Ejemplo: si recibes blobs, puedes hacer:
-                // const video = document.getElementById('live-video');
-                // video.src = URL.createObjectURL(event.data);
+                // Procesar frame recibido y mostrar en <video>
+                const video = document.getElementById('live-video');
+                const blob = new Blob([event.data], { type: 'image/jpeg' });
+                video.src = URL.createObjectURL(blob);
             };
         }
 
-        // REST para ocupación
+        // REST para ocupación desde microservicio
         async function updateSummary() {
             try {
                 document.getElementById('last-updated').textContent = getCurrentDateTime();
@@ -632,7 +632,6 @@
 
         // Inicializar y configurar intervalo de actualización
         document.addEventListener('DOMContentLoaded', async () => {
-            // Simulación de login automático (reemplaza por tu lógica de login real)
             await login('admin', 'admin');
             startWebRTC();
             updateSummary();

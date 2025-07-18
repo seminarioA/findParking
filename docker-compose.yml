@@ -1,5 +1,11 @@
 version: '3.8'
 services:
+  processing_service:
+    build: ./services/processing_service
+    environment:
+      - REDIS_HOST=redis
+    depends_on:
+      - redis
   video_service:
     build: ./services/video_service
     ports:
@@ -20,17 +26,3 @@ services:
     build: ./services/auth_service
     ports:
       - "8003:8003"
-  redis:
-    image: redis:7
-    ports:
-      - "6379:6379"
-  api_gateway:
-    image: nginx:latest
-    volumes:
-      - ./services/api_gateway/nginx.conf:/etc/nginx/nginx.conf:ro
-    ports:
-      - "443:443"
-    depends_on:
-      - video_service
-      - occupancy_service
-      - auth_service

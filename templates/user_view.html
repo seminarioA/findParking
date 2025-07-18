@@ -502,7 +502,11 @@
                 grid.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
                 
                 // Obtener datos reales del endpoint
-                const res = await fetch("/occupancy");
+                const cameraId = 'entrada1';
+                const token = localStorage.getItem('token');
+                const res = await fetch(`/api/occupancy/${cameraId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
                 const data = await res.json();
                 
                 // Actualizar marca de tiempo
