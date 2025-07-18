@@ -1,5 +1,3 @@
-# utils.py
-
 import cv2
 import numpy as np
 import pandas as pd
@@ -22,7 +20,6 @@ def mark_car(frame, x1, y1, x2, y2, cx, cy):
 def detect_and_assign(frame, results, class_list, arr_num):
     occupancy = {f"area{i}": 0 for i in range(1, 13)}
     detections = pd.DataFrame(results[0].boxes.data).astype("float")
-
     for _, row in detections.iterrows():
         x1, y1, x2, y2, _, cls_id = map(int, row[:6])
         cls_name = class_list[cls_id]

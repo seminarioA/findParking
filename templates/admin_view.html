@@ -525,7 +525,7 @@
                     <div class="video-header">
                         <i class="fas fa-video"></i> Cámara Principal - Entrada 1
                     </div>
-                    <img src="{{ url_for('video_feed') }}" width="100%" id="live-video" />
+                    <video id="live-video" width="100%" autoplay playsinline></video>
                     <div class="video-footer">
                         <button class="video-control">
                             <i class="fas fa-pause"></i>
@@ -568,6 +568,88 @@
     </div>
 
     <script>
+        // --- Adaptación Microservicios ---
+        let jwtToken = null;
+        let cameraId = 'entrada1'; // Puedes cambiar dinámicamente según la cámara seleccionada
+
+        // Autenticación y obtención de JWT
+        async function login(username, password) {
+            const res = await fetch('/api/auth/token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `username=${username}&password=${password}`
+            });
+            const data = await res.json();
+            jwtToken = data.access_token;
+        }
+
+        // WebRTC para video procesado
+        async function startWebRTC() {
+            const wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+            const wsUrl = wsProtocol + window.location.host + `/api/video/${cameraId}/processed`;
+            const ws = new WebSocket(wsUrl);
+            ws.onopen = () => {
+                ws.send(JSON.stringify({ Authorization: `Bearer ${jwtToken}` }));
+            };
+            ws.onmessage = (event) => {
+                // Aquí deberías procesar el frame recibido y mostrarlo en el <video>
+                // Ejemplo: si recibes blobs, puedes hacer:
+                // const video = document.getElementById('live-video');
+                // video.src = URL.createObjectURL(event.data);
+            };
+        }
+
+        // REST para ocupación
+        async function updateSummary() {
+            try {
+                document.getElementById('last-updated').textContent = getCurrentDateTime();
+                const res = await fetch(`/api/occupancy/${cameraId}`, {
+                    headers: { 'Authorization': `Bearer ${jwtToken}` }
+                });
+                const data = await res.json();
+                document.getElementById('occupied-count').textContent = data.summary.occupied;
+                document.getElementById('free-count').textContent = data.summary.free;
+                const occupancyRate = Math.round((data.summary.occupied / 12) * 100);
+                document.getElementById('occupancy-rate').textContent = `${occupancyRate}%`;
+                const grid = document.getElementById("spaces-grid");
+                grid.innerHTML = '';
+                for (let i = 1; i <= 12; i++) {
+                    const key = `area${i}`;
+                    const occupied = data.areas[key];
+                    const spaceItem = document.createElement("div");
+                    spaceItem.classList.add("space-item");
+                    spaceItem.innerHTML = `
+                        <div class="space-status ${occupied ? 'space-occupied' : 'space-free'}"></div>
+                        <div class="space-id">Área ${i}</div>
+                        <div class="space-label">${occupied ? 'Ocupado' : 'Libre'}</div>
+                    `;
+                    grid.appendChild(spaceItem);
+                }
+            } catch (error) {
+                console.error("Error al obtener datos:", error);
+            }
+        }
+
+        // Inicializar y configurar intervalo de actualización
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Simulación de login automático (reemplaza por tu lógica de login real)
+            await login('admin', 'admin');
+            startWebRTC();
+            updateSummary();
+            setInterval(updateSummary, 1000);
+            document.getElementById('refresh-btn').addEventListener('click', updateSummary);
+            setInterval(() => {
+                const cpu = Math.floor(Math.random() * 30) + 10;
+                const memory = (Math.random() * 0.5 + 1).toFixed(1);
+                const latency = Math.floor(Math.random() * 30) + 20;
+                document.querySelector('.info-item:nth-child(1)').innerHTML = 
+                    `<i class="fas fa-microchip"></i> CPU: ${cpu}%`;
+                document.querySelector('.info-item:nth-child(2)').innerHTML = 
+                    `<i class="fas fa-memory"></i> Memoria: ${memory}GB`;
+                document.querySelector('.info-item:nth-child(3)').innerHTML = 
+                    `<i class="fas fa-network-wired"></i> ${latency} ms`;
+            }, 5000);
+        });
         // Función para obtener la fecha y hora actual formateada
         function getCurrentDateTime() {
             const now = new Date();
@@ -581,41 +663,27 @@
         // Función para actualizar las estadísticas
         async function updateSummary() {
             try {
-                // Actualizar marca de tiempo
                 document.getElementById('last-updated').textContent = getCurrentDateTime();
-                
-                // Obtener datos de ocupación
                 const res = await fetch("/occupancy");
                 const data = await res.json();
-                
-                // Actualizar contadores
                 document.getElementById('occupied-count').textContent = data.summary.occupied;
                 document.getElementById('free-count').textContent = data.summary.free;
-                
-                // Calcular tasa de ocupación
                 const occupancyRate = Math.round((data.summary.occupied / 12) * 100);
                 document.getElementById('occupancy-rate').textContent = `${occupancyRate}%`;
-                
-                // Actualizar la cuadrícula de espacios
                 const grid = document.getElementById("spaces-grid");
                 grid.innerHTML = '';
-                
                 for (let i = 1; i <= 12; i++) {
                     const key = `area${i}`;
                     const occupied = data.areas[key];
-                    
                     const spaceItem = document.createElement("div");
                     spaceItem.classList.add("space-item");
-                    
                     spaceItem.innerHTML = `
                         <div class="space-status ${occupied ? 'space-occupied' : 'space-free'}"></div>
                         <div class="space-id">Área ${i}</div>
                         <div class="space-label">${occupied ? 'Ocupado' : 'Libre'}</div>
                     `;
-                    
                     grid.appendChild(spaceItem);
                 }
-                
             } catch (error) {
                 console.error("Error al obtener datos:", error);
             }

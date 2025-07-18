@@ -1,16 +1,13 @@
-# camera.py
-
 import cv2
 import threading
 import time
-from utils import load_model, load_classes, dict2np, detect_and_assign, draw_spaces
+from core.utils import load_model, load_classes, dict2np, detect_and_assign, draw_spaces
 
 class VideoProcessor:
     def __init__(self):
-        self.model = load_model("yolo11n.pt")
-        self.class_list = load_classes("coco.txt")
-        self.cap = cv2.VideoCapture("parking1.mp4")
-
+        self.model = load_model("resources/yolo11n.pt")
+        self.class_list = load_classes("resources/coco.txt")
+        self.cap = cv2.VideoCapture("resources/parking1.mp4")
         self.coord_areas = {
             "area1":[(52,364),(30,419),(73,420),(88,365)],
             "area2":[(105,353),(86,428),(137,427),(146,358)],
@@ -26,41 +23,30 @@ class VideoProcessor:
             "area12":[(674,311),(730,360),(764,355),(707,308)] 
         }
         self.arr_num = dict2np(self.coord_areas)
-
         self.frame = None
         self.occupancy = {f"area{i}": 0 for i in range(1, 13)}
         self.lock = threading.Lock()
-
         self.thread = threading.Thread(target=self.update, daemon=True)
         self.thread.start()
-
     def update(self):
         while True:
             ret, frame = self.cap.read()
             if not ret:
                 self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
                 continue
-
             frame = cv2.resize(frame, (1020, 500))
             results = self.model.predict(frame)
             occupancy = detect_and_assign(frame, results, self.class_list, self.arr_num)
             draw_spaces(frame, occupancy, self.arr_num)
-
             with self.lock:
                 self.occupancy = occupancy
                 _, jpeg = cv2.imencode('.jpg', frame)
                 self.frame = jpeg.tobytes()
-
-
-            time.sleep(0.03)  # ~30 FPS
-
+            time.sleep(0.00128)
     def get_frame(self):
         with self.lock:
             return self.frame
-
     def get_occupancy(self):
         with self.lock:
             return dict(self.occupancy)
-
-# Instancia global usada por app.py
 processor = VideoProcessor()
