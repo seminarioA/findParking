@@ -25,7 +25,7 @@ MODEL_PATH = "resources/yolo11n.pt"
 CLASSES_PATH = "resources/coco.txt"
 VIDEO_PATHS = {
     "entrada1": "resources/parking1.mp4"
-    # Puedes agregar más cámaras aquí
+    # Se agregar más cámaras aquí
 }
 AREAS_PATH = "resources/areas.json"
 
