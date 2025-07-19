@@ -1,13 +1,10 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36" version="28.0.6">
   <diagram name="Página-1" id="yC8XF0StlJaor9zLUUnc">
-    <mxGraphModel dx="1024" dy="586" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1078" dy="617" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="d3mRWl4xVi5wV-A9xvA9-23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="d3mRWl4xVi5wV-A9xvA9-2" target="d3mRWl4xVi5wV-A9xvA9-7" edge="1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="d3mRWl4xVi5wV-A9xvA9-2" value="API GateWay" style="outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;shape=mxgraph.aws3.api_gateway;fillColor=#D9A741;gradientColor=none;" parent="1" vertex="1">
+        <mxCell id="d3mRWl4xVi5wV-A9xvA9-2" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;API GateWay&lt;/font&gt;" style="outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;shape=mxgraph.aws3.api_gateway;fillColor=#D9A741;gradientColor=none;" parent="1" vertex="1">
           <mxGeometry x="551.75" y="468" width="76.5" height="93" as="geometry" />
         </mxCell>
         <mxCell id="d3mRWl4xVi5wV-A9xvA9-26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="d3mRWl4xVi5wV-A9xvA9-3" target="d3mRWl4xVi5wV-A9xvA9-6" edge="1">
@@ -16,29 +13,20 @@
         <mxCell id="d3mRWl4xVi5wV-A9xvA9-3" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;Video Stream&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 20px;&quot;&gt;Pipeline&lt;/font&gt;&lt;/div&gt;" style="outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;shape=mxgraph.aws3.data_pipeline;fillColor=#F58534;gradientColor=none;" parent="1" vertex="1">
           <mxGeometry x="199" y="690" width="67.5" height="81" as="geometry" />
         </mxCell>
-        <mxCell id="d3mRWl4xVi5wV-A9xvA9-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="d3mRWl4xVi5wV-A9xvA9-4" target="d3mRWl4xVi5wV-A9xvA9-5" edge="1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
         <mxCell id="d3mRWl4xVi5wV-A9xvA9-4" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;PosgreSQL&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 20px;&quot;&gt;EC2 Instance&lt;/font&gt;&lt;/div&gt;" style="outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;shape=mxgraph.aws3.db_on_instance;fillColor=#F58534;gradientColor=none;" parent="1" vertex="1">
-          <mxGeometry x="330" y="280" width="60" height="64.5" as="geometry" />
+          <mxGeometry x="150" y="280" width="60" height="64.5" as="geometry" />
         </mxCell>
-        <mxCell id="d3mRWl4xVi5wV-A9xvA9-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="d3mRWl4xVi5wV-A9xvA9-5" target="d3mRWl4xVi5wV-A9xvA9-2" edge="1">
+        <mxCell id="vROcdcEqwfNTCg_DQ58N-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="d3mRWl4xVi5wV-A9xvA9-5" target="d3mRWl4xVi5wV-A9xvA9-2">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="d3mRWl4xVi5wV-A9xvA9-5" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;FastAPI&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 20px;&quot;&gt;EC2 Instance&lt;/font&gt;&lt;/div&gt;" style="outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;shape=mxgraph.aws3.instance;fillColor=#F58534;gradientColor=none;" parent="1" vertex="1">
-          <mxGeometry x="405.75" y="483" width="60" height="63" as="geometry" />
-        </mxCell>
-        <mxCell id="d3mRWl4xVi5wV-A9xvA9-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="d3mRWl4xVi5wV-A9xvA9-6" target="d3mRWl4xVi5wV-A9xvA9-5" edge="1">
-          <mxGeometry relative="1" as="geometry" />
+          <mxGeometry x="560" y="270" width="60" height="63" as="geometry" />
         </mxCell>
         <mxCell id="d3mRWl4xVi5wV-A9xvA9-6" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;Redis&amp;nbsp;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 20px;&quot;&gt;EC2 Instance&lt;/font&gt;&lt;/div&gt;" style="outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;shape=mxgraph.aws3.instance;fillColor=#F58534;gradientColor=none;" parent="1" vertex="1">
-          <mxGeometry x="202.75" y="483" width="60" height="63" as="geometry" />
+          <mxGeometry x="300" y="370" width="60" height="63" as="geometry" />
         </mxCell>
-        <mxCell id="d3mRWl4xVi5wV-A9xvA9-7" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;gRPC Instance&lt;/font&gt;" style="outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;shape=mxgraph.aws3.instance;fillColor=#F58534;gradientColor=none;" parent="1" vertex="1">
+        <mxCell id="d3mRWl4xVi5wV-A9xvA9-7" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;WebRTC&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 20px;&quot;&gt;EC2 Instance&lt;/font&gt;&lt;/div&gt;" style="outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;shape=mxgraph.aws3.instance;fillColor=#F58534;gradientColor=none;" parent="1" vertex="1">
           <mxGeometry x="560" y="699" width="60" height="63" as="geometry" />
-        </mxCell>
-        <mxCell id="d3mRWl4xVi5wV-A9xvA9-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="d3mRWl4xVi5wV-A9xvA9-6" target="d3mRWl4xVi5wV-A9xvA9-4" edge="1">
-          <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="d3mRWl4xVi5wV-A9xvA9-21" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;Yolov11 +&amp;nbsp;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 20px;&quot;&gt;OpenCV&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 20px;&quot;&gt;EC2 Instance&lt;/font&gt;&lt;/div&gt;" style="outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;shape=mxgraph.aws3.instance;fillColor=#F58534;gradientColor=none;" parent="1" vertex="1">
           <mxGeometry x="405.75" y="699" width="60" height="63" as="geometry" />
@@ -47,6 +35,9 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="d3mRWl4xVi5wV-A9xvA9-27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.9;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="d3mRWl4xVi5wV-A9xvA9-3" target="d3mRWl4xVi5wV-A9xvA9-21" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vROcdcEqwfNTCg_DQ58N-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="d3mRWl4xVi5wV-A9xvA9-7" target="d3mRWl4xVi5wV-A9xvA9-2">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
       </root>
