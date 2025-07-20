@@ -1,11 +1,22 @@
 version: '3.8'
+
 services:
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
   processing_service:
     build: ./services/processing_service
     environment:
       - REDIS_HOST=redis
     depends_on:
       - redis
+    restart: unless-stopped
+
   video_service:
     build: ./services/video_service
     ports:
@@ -14,6 +25,8 @@ services:
       - REDIS_HOST=redis
     depends_on:
       - redis
+    restart: unless-stopped
+
   occupancy_service:
     build: ./services/occupancy_service
     ports:
@@ -22,16 +35,28 @@ services:
       - REDIS_HOST=redis
     depends_on:
       - redis
+    restart: unless-stopped
+
   auth_service:
     build: ./services/auth_service
     ports:
       - "8003:8003"
-  redis:
-    image: redis:7
+    restart: unless-stopped
+
+  video_stream_service:
+    build: ./services/video_stream_service
     ports:
-      - "6379:6379"
+      - "8010:8010"
+    environment:
+      - VIDEO_PATHS={"entrada1":"resources/parking1.mp4"}
     volumes:
-      - redis_data:/data
+      - ./resources:/app/resources
+    depends_on:
+      - video_service
+      - occupancy_service
+      - auth_service
+    restart: unless-stopped
+
   api_gateway:
     image: nginx:latest
     volumes:
@@ -42,5 +67,7 @@ services:
       - video_service
       - occupancy_service
       - auth_service
+    restart: unless-stopped
+
 volumes:
   redis_data:

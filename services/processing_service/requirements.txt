@@ -1,7 +1,6 @@
-opencv-python
-redis
+opencv-python-headless
 ultralytics
+redis
 numpy
 pandas
-fastapi
-uvicorn
+torch
