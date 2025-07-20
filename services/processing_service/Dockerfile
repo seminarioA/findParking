@@ -3,6 +3,6 @@ FROM python:3.11-slim
 WORKDIR /app
 COPY . /app
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
-CMD ["python", "-m", "processing_service"]
+CMD ["python", "-m", "__main__"]
