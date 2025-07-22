@@ -12,9 +12,25 @@ export default function Occupancy({ cameraId, token }: Props) {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    // Consulta inicial por REST
     getOccupancy(cameraId, token)
       .then(setData)
       .catch(() => setError('No se pudo obtener ocupación'));
+
+    // WebSocket para actualizaciones en tiempo real
+    const wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+    const wsUrl = wsProtocol + window.location.host + `/api/occupancy/${cameraId}/ws?token=Bearer%20${token}`;
+    const ws = new WebSocket(wsUrl);
+    ws.onmessage = (event) => {
+      try {
+        const newData = JSON.parse(event.data);
+        setData(newData);
+      } catch (e) {
+        setError('Error actualizando ocupación');
+      }
+    };
+    ws.onerror = () => setError('Error de conexión WebSocket');
+    return () => ws.close();
   }, [cameraId, token]);
 
   if (error) return <Typography color="error">{error}</Typography>;

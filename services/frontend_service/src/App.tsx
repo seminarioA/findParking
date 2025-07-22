@@ -52,40 +52,66 @@ function App() {
           <Login onLogin={handleLogin} />
         </Box>
       ) : (
-        <Container maxWidth="md">
-          <Box mt={4}>
-            <Typography variant="h4" mb={2}>FindParking Frontend</Typography>
-
-            <Button
-              variant="text"
-              onClick={() => setDarkMode(prev => !prev)}
-              sx={{ mb: 2 }}
+        <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center" bgcolor="background.default">
+          <Container maxWidth="sm">
+            <Box
+              sx={{
+                bgcolor: 'grey.900',
+                color: 'common.white',
+                borderRadius: 6,
+                boxShadow: 6,
+                p: 4,
+                textAlign: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 3,
+                animation: 'fadein 1s',
+                '@keyframes fadein': {
+                  from: { opacity: 0 },
+                  to: { opacity: 1 }
+                }
+              }}
             >
-              {darkMode ? 'Modo claro' : 'Modo oscuro'}
-            </Button>
-
-            <Box display="flex" alignItems="center" gap={2} mb={2}>
-              <Select
-                value={cameraId}
-                onChange={e => setCameraId((e.target as HTMLInputElement).value)}
+              <Typography variant="h3" fontWeight={700} mb={1} sx={{ letterSpacing: 2 }}>
+                ¡Bienvenido a FindParking!
+              </Typography>
+              <Typography variant="subtitle1" mb={2} sx={{ color: 'grey.400' }}>
+                {role ? `Rol: ${role.toUpperCase()}` : ''}
+              </Typography>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => setDarkMode(prev => !prev)}
+                sx={{ borderRadius: 3, fontWeight: 600, mb: 1 }}
               >
-                {CAMERAS.map(cam => (
-                  <MenuItem key={cam} value={cam}>
-                    {cam}
-                  </MenuItem>
-                ))}
-              </Select>
-              <Button variant="outlined" onClick={handleLogout}>
-                Cerrar sesión
+                {darkMode ? 'Modo claro' : 'Modo oscuro'}
               </Button>
+              <Box display="flex" alignItems="center" gap={2} justifyContent="center" mb={2}>
+                <Select
+                  value={cameraId}
+                  onChange={e => setCameraId((e.target as HTMLInputElement).value)}
+                  sx={{ bgcolor: 'grey.800', color: 'common.white', borderRadius: 3, fontWeight: 600 }}
+                >
+                  {CAMERAS.map(cam => (
+                    <MenuItem key={cam} value={cam} sx={{ color: 'common.white', bgcolor: 'grey.900', borderRadius: 2 }}>
+                      {cam}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <Button variant="outlined" color="error" onClick={handleLogout} sx={{ borderRadius: 3, fontWeight: 600 }}>
+                  Cerrar sesión
+                </Button>
+              </Box>
+              <Box width="100%" mt={2}>
+                <Occupancy cameraId={cameraId} token={token} />
+                {(role === 'admin' || role === 'gestor') && (
+                  <VideoStream cameraId={cameraId} token={token} />
+                )}
+              </Box>
             </Box>
-
-            <Occupancy cameraId={cameraId} token={token} />
-            {(role === 'admin' || role === 'gestor') && (
-              <VideoStream cameraId={cameraId} token={token} />
-            )}
-          </Box>
-        </Container>
+          </Container>
+        </Box>
       )}
     </ThemeProvider>
   );
