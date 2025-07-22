@@ -26,6 +26,8 @@ services:
     environment:
       - DATABASE_URL=postgresql+asyncpg://auth_user:auth_password@postgres:5432/auth_db
       - SECRET_KEY=super-secret-key
+    env_file:
+      - ./services/auth_service/.env
     depends_on:
       - redis
       - postgres
@@ -56,6 +58,8 @@ services:
       - "8002:8002"
     environment:
       - REDIS_HOST=redis
+    env_file:
+      - ./services/occupancy_service/.env
     depends_on:
       - redis
       - auth_service
