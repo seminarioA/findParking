@@ -36,6 +36,14 @@ def logout(Authorization: str = Header(...), db: Session = Depends(get_db)):
     revoke_token(payload["jti"], db)
     return {"msg": "Token revocado"}
 
+
+# Nuevo endpoint para obtener el usuario actual (email y rol)
+@router.get("/me")
+def get_me(Authorization: str = Header(...), db: Session = Depends(get_db)):
+    token = Authorization.split(" ")[1]
+    payload = verify_token(token, db)
+    return {"email": payload["sub"], "role": payload["role"]}
+
 @router.get("/verify")
 def verify(Authorization: str = Header(...), db: Session = Depends(get_db)):
     token = Authorization.split(" ")[1]

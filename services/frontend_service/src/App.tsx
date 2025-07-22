@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Login from './components/Login';
 import Occupancy from './components/Occupancy';
 import VideoStream from './components/VideoStream';
+import { getRole } from './api/auth';
 import {
   Container,
   Box,
@@ -24,17 +25,31 @@ const darkTheme = createTheme({
 
 function App() {
   const [token, setToken] = useState<string | null>(null);
+  const [role, setRole] = useState<string | null>(null);
   const [cameraId, setCameraId] = useState(CAMERAS[0]);
   const [darkMode, setDarkMode] = useState(true);
 
-  const handleLogout = () => setToken(null);
+  const handleLogin = async (newToken: string) => {
+    setToken(newToken);
+    try {
+      const userRole = await getRole(newToken);
+      setRole(userRole);
+    } catch {
+      setRole(null);
+    }
+  };
+
+  const handleLogout = () => {
+    setToken(null);
+    setRole(null);
+  };
 
   return (
     <ThemeProvider theme={darkMode ? darkTheme : createTheme({ palette: { mode: 'light' } })}>
       <CssBaseline />
       {!token ? (
         <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center" bgcolor="background.default">
-          <Login onLogin={setToken} />
+          <Login onLogin={handleLogin} />
         </Box>
       ) : (
         <Container maxWidth="md">
@@ -66,7 +81,9 @@ function App() {
             </Box>
 
             <Occupancy cameraId={cameraId} token={token} />
-            <VideoStream cameraId={cameraId} token={token} />
+            {(role === 'admin' || role === 'gestor') && (
+              <VideoStream cameraId={cameraId} token={token} />
+            )}
           </Box>
         </Container>
       )}
