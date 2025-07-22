@@ -1,5 +1,5 @@
 fastapi
 uvicorn
-redis
-starlette
+gunicorn
 httpx
+redis
