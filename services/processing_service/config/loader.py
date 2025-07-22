@@ -9,5 +9,5 @@ def load_config():
         "model_path": os.getenv("MODEL_PATH", "resources/yolo11n.pt"),
         "classes_path": os.getenv("CLASSES_PATH", "resources/coco.txt"),
         "areas_path": os.getenv("AREAS_PATH", "resources/areas.json"),
-        "video_sources": json.loads(os.getenv("VIDEO_SOURCES", '{"entrada1": "http://video_stream_service:8010/stream/entrada1"}'))
+        "video_sources": json.loads(os.getenv("VIDEO_SOURCES", '{"entrada1": "http://localhost:8010/stream/entrada1"}'))
     }
