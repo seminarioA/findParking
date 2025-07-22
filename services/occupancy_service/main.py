@@ -2,44 +2,75 @@
 Occupancy Service
 Microservicio para servir estado de ocupación por cámara.
 """
-from fastapi import FastAPI, Depends, HTTPException
-import redis
-def verify_jwt():
-    # TODO: Implement JWT verification via HTTP request to auth_service or import from shared core module
-    pass
 
-import logging
 import os
+import logging
+import redis
+import json
+import jwt
 
-REDIS_HOST = os.getenv('REDIS_HOST', 'redis')
-REDIS_PORT = int(os.getenv('REDIS_PORT', 6379))
-REDIS_DB = int(os.getenv('REDIS_DB', 0))
+from fastapi import FastAPI, Depends, HTTPException
+from fastapi.security import HTTPBearer
+from jwt import PyJWTError
+from dotenv import load_dotenv
 
-app = FastAPI(title="Occupancy Service", version="1.0")
+# Carga .env
+load_dotenv()
+
+# Configuración JWT
+JWT_SECRET = os.getenv("JWT_SECRET", "CHANGE_THIS_SECRET")
+JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
+
+# Configuración Redis
+REDIS_HOST = os.getenv("REDIS_HOST", "redis")
+REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
+REDIS_DB   = int(os.getenv("REDIS_DB", 0))
+
+# Inicialización Redis
 redis_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB)
+
+# Logger
 logger = logging.getLogger("occupancy_service")
 logging.basicConfig(level=logging.INFO)
 
+# Seguridad
+security = HTTPBearer()
+
+def verify_jwt(token: str = Depends(security)):
+    """Verifica el JWT localmente."""
+    try:
+        return jwt.decode(token.credentials, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+    except PyJWTError as e:
+        logger.warning(f"Token inválido: {e}")
+        raise HTTPException(status_code=401, detail="Token inválido o expirado")
+
+# FastAPI App
+app = FastAPI(title="Occupancy Service", version="1.0")
+
 @app.get("/api/occupancy/{camera_id}")
 async def get_occupancy(camera_id: str, user=Depends(verify_jwt)):
-    """Devuelve estado de ocupación para camera_id"""
+    """Devuelve el estado de ocupación de una cámara."""
     try:
-        data = redis_client.get(f"occupancy_{camera_id}")
-        if not data:
-            logger.warning(f"No hay datos de ocupación para cámara {camera_id}, devolviendo default.")
-            data = {f"area{i}": 0 for i in range(1, 13)}
-        else:
-            import pickle
-            try:
-                data = pickle.loads(data)
-            except Exception as e:
-                logger.error(f"Error deserializando ocupación: {e}")
-                data = {f"area{i}": 0 for i in range(1, 13)}
-        total = {
+        key = f"occupancy_{camera_id}"
+        raw = redis_client.get(key)
+
+        if raw is None:
+            logger.info(f"No hay datos para cámara {camera_id}. Retornando estructura vacía.")
+            return {"areas": {}, "summary": {"occupied": 0, "free": 0}}
+
+        try:
+            data = json.loads(raw.decode())
+        except Exception as e:
+            logger.error(f"Error deserializando ocupación de {camera_id}: {e}")
+            raise HTTPException(status_code=500, detail="Error deserializando datos")
+
+        summary = {
             "occupied": sum(1 for v in data.values() if v == 1),
-            "free": sum(1 for v in data.values() if v == 0)
+            "free":     sum(1 for v in data.values() if v == 0)
         }
-        return {"areas": data, "summary": total}
+
+        return {"areas": data, "summary": summary}
+
     except Exception as e:
-        logger.error(f"Error en endpoint /api/occupancy/{camera_id}: {e}")
-        raise HTTPException(status_code=500, detail="Error interno en el servicio de ocupación")
+        logger.exception(f"Fallo en /api/occupancy/{camera_id}")
+        raise HTTPException(status_code=500, detail="Error interno en servicio de ocupación")

@@ -9,6 +9,30 @@ services:
       - redis_data:/data
     restart: unless-stopped
 
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: auth_db
+      POSTGRES_USER: auth_user
+      POSTGRES_PASSWORD: auth_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  auth_service:
+    build: ./services/auth_service
+    ports:
+      - "8003:8003"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://auth_user:auth_password@postgres:5432/auth_db
+      - SECRET_KEY=super-secret-key
+    depends_on:
+      - redis
+      - postgres
+    restart: unless-stopped
+
   processing_service:
     build: ./services/processing_service
     environment:
@@ -25,6 +49,7 @@ services:
       - REDIS_HOST=redis
     depends_on:
       - redis
+      - auth_service
     restart: unless-stopped
 
   occupancy_service:
@@ -35,12 +60,7 @@ services:
       - REDIS_HOST=redis
     depends_on:
       - redis
-    restart: unless-stopped
-
-  auth_service:
-    build: ./services/auth_service
-    ports:
-      - "8003:8003"
+      - auth_service
     restart: unless-stopped
 
   video_stream_service:
@@ -71,3 +91,4 @@ services:
 
 volumes:
   redis_data:
+  postgres_data:
