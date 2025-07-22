@@ -58,6 +58,8 @@ async def get_occupancy(camera_id: str, user=Depends(verify_jwt)):
             logger.info(f"No hay datos para cámara {camera_id}. Retornando estructura vacía.")
             return {"areas": {}, "summary": {"occupied": 0, "free": 0}}
 
+        # Log temporal para depuración
+        logger.warning(f"Valor bruto en Redis para {camera_id}: {raw}")
         try:
             data = json.loads(raw.decode())
         except Exception as e:

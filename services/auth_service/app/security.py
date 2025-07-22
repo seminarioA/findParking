@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from .config import SECRET_KEY, ACCESS_TOKEN_EXPIRE_MINUTES
+from .config import JWT_SECRET, ACCESS_TOKEN_EXPIRE_MINUTES
 from fastapi import HTTPException, status, Depends
 from sqlalchemy.orm import Session
 from .database import SessionLocal
@@ -27,11 +27,11 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
     expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
     to_encode.update({"exp": expire, "jti": data.get("jti")})
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return jwt.encode(to_encode, JWT_SECRET, algorithm=ALGORITHM)
 
 def verify_token(token: str, db: Session):
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[ALGORITHM])
         jti = payload.get("jti")
         if db.query(TokenBlacklist).filter_by(jti=jti).first():
             raise HTTPException(status_code=401, detail="Token revocado")

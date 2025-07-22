@@ -29,7 +29,9 @@ def process_video(camera_id, stream_url, model, class_list, polygons, device):
 
         _, jpeg = cv2.imencode('.jpg', frame)
         redis_client.set(f"frame_{camera_id}_processed", jpeg.tobytes())
-        redis_client.set(f"occupancy_{camera_id}", pickle.dumps(occupancy))
+        # Guardar ocupación como JSON UTF-8
+        import json
+        redis_client.set(f"occupancy_{camera_id}", json.dumps(occupancy).encode())
 
         frame_count += 1
         elapsed = time.time() - start_time

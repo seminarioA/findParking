@@ -22,7 +22,7 @@ services:
   auth_service:
     build: ./services/auth_service
     ports:
-      - "8003:8003"
+      - "8000:8000"
     environment:
       - DATABASE_URL=postgresql+asyncpg://auth_user:auth_password@postgres:5432/auth_db
       - SECRET_KEY=super-secret-key
@@ -55,7 +55,7 @@ services:
   occupancy_service:
     build: ./services/occupancy_service
     ports:
-      - "8002:8002"
+      - "8002:8000"
     environment:
       - REDIS_HOST=redis
     env_file:
