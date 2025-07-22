@@ -1,11 +1,7 @@
-"""
-Video Service
-Microservicio para servir streams de video procesado y original por cámara.
-"""
-from fastapi import FastAPI, WebSocket, Depends
+from fastapi import FastAPI, WebSocket
 import redis
-from services.auth_service.main import verify_jwt
-
+import httpx
+import httpx
 import logging
 import os
 from starlette.websockets import WebSocketDisconnect
@@ -19,10 +15,32 @@ redis_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB)
 logger = logging.getLogger("video_service")
 logging.basicConfig(level=logging.INFO)
 
+async def verify_jwt(token: str) -> bool:
+    """
+    Verifica el JWT llamando al endpoint de autenticación.
+    Retorna True si el token es válido, False si no.
+    """
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                "http://auth_service:8003/api/auth/verify",
+                json={"token": token},
+                timeout=5.0
+            )
+        return response.status_code == 200
+    except Exception as e:
+        logger.error(f"Error verificando JWT: {e}")
+        return False
+
 @app.websocket("/api/video/{camera_id}/processed")
-async def processed_video_ws(camera_id: str, websocket: WebSocket, user=Depends(verify_jwt)):
-    """WebRTC stream procesado para camera_id"""
-    await websocket.accept()
+async def processed_video_ws(camera_id: str, websocket: WebSocket):
+    # Extraer el token JWT del header Sec-WebSocket-Protocol
+    token = websocket.headers.get("sec-websocket-protocol", "")
+    if not token or not await verify_jwt(token):
+        await websocket.close(code=4401)
+        logger.warning(f"Conexión rechazada por JWT inválido en /api/video/{camera_id}/processed")
+        return
+    await websocket.accept(subprotocol=token)
     logger.info(f"WebSocket conectado: /api/video/{camera_id}/processed")
     try:
         import asyncio
@@ -40,9 +58,13 @@ async def processed_video_ws(camera_id: str, websocket: WebSocket, user=Depends(
         logger.error(f"Error en WebSocket /api/video/{camera_id}/processed: {e}")
 
 @app.websocket("/api/video/{camera_id}/raw")
-async def raw_video_ws(camera_id: str, websocket: WebSocket, user=Depends(verify_jwt)):
-    """WebRTC stream original para camera_id"""
-    await websocket.accept()
+async def raw_video_ws(camera_id: str, websocket: WebSocket):
+    token = websocket.headers.get("sec-websocket-protocol", "")
+    if not token or not await verify_jwt(token):
+        await websocket.close(code=4401)
+        logger.warning(f"Conexión rechazada por JWT inválido en /api/video/{camera_id}/raw")
+        return
+    await websocket.accept(subprotocol=token)
     logger.info(f"WebSocket conectado: /api/video/{camera_id}/raw")
     try:
         import asyncio

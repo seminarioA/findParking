@@ -2,8 +2,8 @@
 
 from fastapi import FastAPI, Response
 from fastapi.responses import StreamingResponse
-from services.video_stream_service.config import VIDEO_PATHS
-from services.video_stream_service.camera_manager import generate_mjpeg_stream
+from config import VIDEO_PATHS
+from camera_manager import generate_mjpeg_stream
 import os
 
 app = FastAPI()

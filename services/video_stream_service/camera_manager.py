@@ -4,7 +4,7 @@ import cv2
 import time
 from contextlib import closing
 from fastapi import HTTPException
-from services.video_stream_service.utils import build_mjpeg_frame
+from utils import build_mjpeg_frame
 
 def generate_mjpeg_stream(video_path: str):
     cap = cv2.VideoCapture(video_path)

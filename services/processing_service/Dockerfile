@@ -15,7 +15,10 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     pip install --upgrade pip && \
     pip install --prefer-binary --timeout=120 --retries=10 -r requirements.txt
 
+# Instala libGL.so.1 para OpenCV
+RUN apt-get update && apt-get install -y libgl1-mesa-glx && rm -rf /var/lib/apt/lists/*    
+
 # Copia el resto del código
 COPY . .
 
-CMD ["python", "-m", "__main__"]
+CMD ["python","main.py"]

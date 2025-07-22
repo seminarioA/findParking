@@ -4,8 +4,9 @@ Microservicio para servir estado de ocupación por cámara.
 """
 from fastapi import FastAPI, Depends, HTTPException
 import redis
-from services.auth_service.main import verify_jwt
-
+def verify_jwt():
+    # TODO: Implement JWT verification via HTTP request to auth_service or import from shared core module
+    pass
 
 import logging
 import os
