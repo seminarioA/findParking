@@ -10,7 +10,6 @@ import {
   Fade,
   Stack
 } from '@mui/material';
-import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
@@ -23,7 +22,6 @@ interface Props {
 
 export default function Register({ onBack }: Props) {
   const [mounted, setMounted] = useState(false);
-  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -38,7 +36,6 @@ export default function Register({ onBack }: Props) {
 
   const validate = () => {
     const errors: { [key: string]: string } = {};
-    if (!username.trim()) errors.username = 'El usuario es obligatorio.';
     if (!email.trim()) errors.email = 'El correo es obligatorio.';
     else if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/i.test(email)) errors.email = 'Correo no válido.';
     if (!password.trim()) errors.password = 'La contraseña es obligatoria.';
@@ -60,9 +57,8 @@ export default function Register({ onBack }: Props) {
 
     setLoading(true);
     try {
-      await register(username, email, password);
+      await register(email, password); // Solo email y password
       setGlobalMessage({ type: 'success', text: 'Usuario registrado correctamente.' });
-      setUsername('');
       setEmail('');
       setPassword('');
       setConfirm('');
@@ -116,23 +112,6 @@ export default function Register({ onBack }: Props) {
           </Typography>
 
           <form onSubmit={handleRegister} noValidate>
-            <TextField
-              label="Usuario"
-              fullWidth
-              margin="dense"
-              value={username}
-              onChange={e => setUsername(e.target.value)}
-              error={!!fieldErrors.username}
-              helperText={fieldErrors.username || ' '}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <PersonOutlineIcon color="action" />
-                  </InputAdornment>
-                ),
-              }}
-            />
-
             <TextField
               label="Correo"
               fullWidth
@@ -225,6 +204,6 @@ export default function Register({ onBack }: Props) {
           </form>
         </Paper>
       </Fade>
-    </Box>
+      </Box>
   );
 }

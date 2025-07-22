@@ -10,7 +10,7 @@ import {
   Fade,
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import { login } from '../api/auth';
 import Register from './Register';
 
@@ -19,7 +19,7 @@ interface Props {
 }
 
 export default function Login({ onLogin }: Props) {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -34,18 +34,18 @@ export default function Login({ onLogin }: Props) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!username.trim() || !password.trim()) {
-      setError('Usuario y contraseña son obligatorios.');
+    if (!email.trim() || !password.trim()) {
+      setError('Correo y contraseña son obligatorios.');
       return;
     }
 
     setLoading(true);
     setError('');
     try {
-      const token = await login(username, password);
+      const token = await login(email, password);
       onLogin(token);
     } catch {
-      setError('Usuario o contraseña incorrectos.');
+      setError('Correo o contraseña incorrectos.');
     } finally {
       setLoading(false);
     }
@@ -86,19 +86,19 @@ export default function Login({ onLogin }: Props) {
 
           <form onSubmit={handleSubmit} noValidate>
             <TextField
-              label="Usuario"
+              label="Correo"
               fullWidth
               margin="dense"
-              value={username}
-              onChange={e => setUsername(e.target.value)}
+              value={email}
+              onChange={e => setEmail(e.target.value)}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <PersonOutlineIcon color="action" />
+                    <EmailOutlinedIcon color="action" />
                   </InputAdornment>
                 ),
               }}
-              autoComplete="username"
+              autoComplete="email"
               variant="outlined"
               error={!!error}
             />

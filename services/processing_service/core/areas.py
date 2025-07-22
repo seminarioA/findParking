@@ -2,6 +2,10 @@ import json
 import numpy as np
 import logging
 
+# Silenciar logs de Ultralytics
+logging.getLogger("ultralytics").setLevel(logging.WARNING)
+logging.getLogger("ultralytics.yolo.engine.model").setLevel(logging.ERROR)
+
 logger = logging.getLogger("areas_loader")
 
 def load_areas(path: str):
