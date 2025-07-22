@@ -5,3 +5,5 @@ python-dotenv
 passlib[bcrypt]
 python-jose
 gunicorn
+uvicorn
+email-validator
