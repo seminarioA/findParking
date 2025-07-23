@@ -6,8 +6,6 @@ function Footer({ darkMode }: { darkMode: boolean }) {
       component="footer"
       sx={{
         width: '100%',
-        maxWidth: { xs: 700, md: 1200 },
-        mx: 'auto',
         bgcolor: darkMode ? 'grey.900' : 'grey.100',
         borderRadius: 6,
         boxShadow: 4,
@@ -31,7 +29,6 @@ function Footer({ darkMode }: { darkMode: boolean }) {
       >
         alejandro@email.com
       </a>
-      <Box sx={{ height: { xs: 32, md: 48 } }} />
     </Box>
   );
 }
