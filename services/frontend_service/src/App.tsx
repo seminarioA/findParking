@@ -7,8 +7,6 @@ import {
   Container,
   Box,
   Typography,
-  Select,
-  MenuItem,
   CssBaseline,
   ThemeProvider,
   createTheme
@@ -23,9 +21,9 @@ const darkTheme = createTheme({
 });
 
 function App() {
+  const [cameraId, setCameraId] = useState(CAMERAS[0]);
   const [token, setToken] = useState<string | null>(null);
   const [role, setRole] = useState<string | null>(null);
-  const [cameraId, setCameraId] = useState(CAMERAS[0]);
   const [darkMode, setDarkMode] = useState(true);
 
   const handleLogin = async (newToken: string) => {
@@ -77,6 +75,28 @@ function App() {
               FindParking
             </Typography>
             <Box display="flex" alignItems="center" gap={2}>
+              {/* Selector de cámara en el navbar */}
+              <Box sx={{ minWidth: 160 }}>
+                <select
+                  value={cameraId}
+                  onChange={e => setCameraId(e.target.value)}
+                  style={{
+                    background: darkMode ? '#212121' : '#f5f5f5',
+                    color: darkMode ? '#fff' : '#222',
+                    borderRadius: 99,
+                    fontWeight: 600,
+                    padding: '8px 24px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                    border: 'none',
+                    outline: 'none',
+                    fontSize: 16,
+                  }}
+                >
+                  {CAMERAS.map(cam => (
+                    <option key={cam} value={cam}>{cam}</option>
+                  ))}
+                </select>
+              </Box>
               {/* Pills para rol y usuario */}
               {role && (
                 <Box
@@ -188,58 +208,29 @@ function App() {
           </Box>
           {/* Contenido principal centrado y responsivo */}
           <Container maxWidth={false} sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', py: 4, width: { xs: '98%', md: '90%', lg: '80%' }, maxWidth: { xs: 700, md: 1200 } }}>
-            {/* Selector de cámara arriba de la grilla */}
-            <Box width="100%" display="flex" justifyContent="flex-end" mb={2}>
-              <Select
-                value={cameraId}
-                onChange={e => setCameraId((e.target as HTMLInputElement).value)}
-                sx={{
-                  bgcolor: darkMode ? 'grey.900' : 'grey.100',
-                  color: darkMode ? 'common.white' : 'grey.900',
-                  borderRadius: 99,
-                  fontWeight: 600,
-                  minWidth: 160,
-                  pl: 2,
-                  pr: 2,
-                  boxShadow: 2,
-                  display: 'flex',
-                  alignItems: 'center',
-                  py: 1,
-                  height: 48,
-                }}
-                IconComponent={() => null}
-                MenuProps={{
-                  PaperProps: {
-                    sx: {
-                      borderRadius: 3,
-                      boxShadow: 4,
-                    }
-                  }
-                }}
-              >
-                {CAMERAS.map(cam => (
-                  <MenuItem key={cam} value={cam} sx={{
-                    color: darkMode ? 'common.white' : 'grey.900',
+          {/* Footer tipo isla */}
+          <Box width="100%" display="flex" justifyContent="center" mt={4} mb={2}>
+            <Box sx={{ width: { xs: '98%', md: '90%', lg: '80%' }, maxWidth: { xs: 700, md: 1200 }, mx: 'auto' }}>
+              <Box component={"footer"}>
+                <Box
+                  component={"div"}
+                  sx={{
                     bgcolor: darkMode ? 'grey.900' : 'grey.100',
-                    borderRadius: 2,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1,
+                    borderRadius: 6,
+                    boxShadow: 4,
+                    border: `2px solid ${darkMode ? '#222' : '#bbb'}`,
+                    p: 3,
+                    textAlign: 'center',
+                    color: darkMode ? 'grey.100' : 'grey.900',
                     fontWeight: 700,
                     fontSize: 18,
-                    py: 1.5,
-                  }}>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', marginRight: 12, verticalAlign: 'middle' }}>
-                      <svg width="28" height="28" fill="currentColor" style={{ verticalAlign: 'middle', display: 'inline-block' }}>
-                        <rect x="6" y="10" width="16" height="8" rx="4" fill={darkMode ? '#fff' : '#333'} />
-                        <circle cx="14" cy="14" r="3.5" fill={darkMode ? '#333' : '#fff'} />
-                      </svg>
-                    </span>
-                    {cam}
-                  </MenuItem>
-                ))}
-              </Select>
+                  }}
+                >
+                  Alejandro - ML/Computer Vision Engineer | <a href="mailto:alejandro@email.com" style={{ color: darkMode ? '#90caf9' : '#1976d2', textDecoration: 'none', fontWeight: 700 }}>alejandro@email.com</a>
+                </Box>
+              </Box>
             </Box>
+          </Box>
             {/* Resumen y grilla de ocupación */}
             <Box width="100%" display="flex" flexDirection={{ xs: 'column', lg: 'row' }} alignItems={{ xs: 'stretch', lg: 'flex-start' }} justifyContent="space-between" gap={2} mb={3}>
               <Box flex={1}>
