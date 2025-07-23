@@ -58,17 +58,17 @@ function App() {
             display="flex"
             alignItems="center"
             justifyContent="space-between"
-            px={4}
-            py={2}
+            p={3}
             boxShadow={4}
             bgcolor={darkMode ? 'grey.900' : 'grey.100'}
             sx={{
-              borderRadius: 99,
+              borderRadius: 6,
               border: `2px solid ${darkMode ? '#222' : '#bbb'}`,
               mx: 'auto',
               mt: 3,
-              width: { xs: '95%', md: '80%' },
-              maxWidth: 700,
+              width: '100%',
+              maxWidth: { xs: 700, md: 1200 },
+              minWidth: 0,
               minHeight: 64,
               position: 'relative',
             }}
@@ -77,10 +77,65 @@ function App() {
               FindParking
             </Typography>
             <Box display="flex" alignItems="center" gap={2}>
-              {/* Rol solo visible en md+ */}
-              <Typography variant="subtitle2" sx={{ fontWeight: 600, display: { xs: 'none', md: 'block' } }} color={darkMode ? 'grey.300' : 'grey.700'}>
-                {role ? `Rol: ${role.toUpperCase()}` : ''}
-              </Typography>
+              {/* Pills para rol y usuario */}
+              {role && (
+                <Box
+                  sx={{
+                    display: { xs: 'none', md: 'flex' },
+                    alignItems: 'center',
+                    bgcolor: darkMode ? 'grey.800' : 'grey.200',
+                    color: darkMode ? 'grey.100' : 'grey.900',
+                    borderRadius: 99,
+                    px: 2,
+                    py: 1,
+                    boxShadow: 2,
+                    fontWeight: 700,
+                    fontSize: 16,
+                    gap: 1.2,
+                  }}
+                >
+                  {/* Icono de escudo para el rol */}
+                  <svg width="20" height="20" fill="currentColor" style={{ marginRight: 6 }}>
+                    <path d="M10 2l7 3v5c0 5-3.5 9-7 9s-7-4-7-9V5l7-3z" fill={darkMode ? '#90caf9' : '#1976d2'} />
+                  </svg>
+                  {`Rol: ${role.toUpperCase()}`}
+                </Box>
+              )}
+              {/* Pill para usuario (fragmento antes del @) */}
+              {token && (
+                <Box
+                  sx={{
+                    display: { xs: 'none', md: 'flex' },
+                    alignItems: 'center',
+                    bgcolor: darkMode ? 'grey.800' : 'grey.200',
+                    color: darkMode ? 'grey.100' : 'grey.900',
+                    borderRadius: 99,
+                    px: 2,
+                    py: 1,
+                    boxShadow: 2,
+                    fontWeight: 700,
+                    fontSize: 16,
+                    gap: 1.2,
+                  }}
+                >
+                  {/* Icono de usuario */}
+                  <svg width="20" height="20" fill="currentColor" style={{ marginRight: 6 }}>
+                    <circle cx="10" cy="7" r="4" fill={darkMode ? '#ffb74d' : '#f57c00'} />
+                    <ellipse cx="10" cy="15" rx="6" ry="3" fill={darkMode ? '#ffb74d' : '#f57c00'} />
+                  </svg>
+                  {/* Extrae el nombre antes del @ del token si es posible */}
+                  {(() => {
+                    // Si el token es un JWT, intenta decodificar el payload
+                    try {
+                      const payload = JSON.parse(atob(token.split('.')[1]));
+                      if (payload && payload.email) {
+                        return payload.email.split('@')[0];
+                      }
+                    } catch {}
+                    return 'Usuario';
+                  })()}
+                </Box>
+              )}
               {/* Icono modo claro/oscuro, solo icono en xs */}
               <Box
                 sx={{
@@ -132,16 +187,54 @@ function App() {
             </Box>
           </Box>
           {/* Contenido principal centrado y responsivo */}
-          <Container maxWidth="md" sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', py: 4 }}>
+          <Container maxWidth={false} sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', py: 4, width: { xs: '98%', md: '90%', lg: '80%' }, maxWidth: { xs: 700, md: 1200 } }}>
             {/* Selector de cámara arriba de la grilla */}
             <Box width="100%" display="flex" justifyContent="flex-end" mb={2}>
               <Select
                 value={cameraId}
                 onChange={e => setCameraId((e.target as HTMLInputElement).value)}
-                sx={{ bgcolor: darkMode ? 'grey.800' : 'grey.200', color: darkMode ? 'common.white' : 'grey.900', borderRadius: 99, fontWeight: 600, minWidth: 120 }}
+                sx={{
+                  bgcolor: darkMode ? 'grey.900' : 'grey.100',
+                  color: darkMode ? 'common.white' : 'grey.900',
+                  borderRadius: 99,
+                  fontWeight: 600,
+                  minWidth: 160,
+                  pl: 2,
+                  pr: 2,
+                  boxShadow: 2,
+                  display: 'flex',
+                  alignItems: 'center',
+                  py: 1,
+                  height: 48,
+                }}
+                IconComponent={() => null}
+                MenuProps={{
+                  PaperProps: {
+                    sx: {
+                      borderRadius: 3,
+                      boxShadow: 4,
+                    }
+                  }
+                }}
               >
                 {CAMERAS.map(cam => (
-                  <MenuItem key={cam} value={cam} sx={{ color: darkMode ? 'common.white' : 'grey.900', bgcolor: darkMode ? 'grey.900' : 'grey.100', borderRadius: 2 }}>
+                  <MenuItem key={cam} value={cam} sx={{
+                    color: darkMode ? 'common.white' : 'grey.900',
+                    bgcolor: darkMode ? 'grey.900' : 'grey.100',
+                    borderRadius: 2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    fontWeight: 700,
+                    fontSize: 18,
+                    py: 1.5,
+                  }}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', marginRight: 12, verticalAlign: 'middle' }}>
+                      <svg width="28" height="28" fill="currentColor" style={{ verticalAlign: 'middle', display: 'inline-block' }}>
+                        <rect x="6" y="10" width="16" height="8" rx="4" fill={darkMode ? '#fff' : '#333'} />
+                        <circle cx="14" cy="14" r="3.5" fill={darkMode ? '#333' : '#fff'} />
+                      </svg>
+                    </span>
                     {cam}
                   </MenuItem>
                 ))}
