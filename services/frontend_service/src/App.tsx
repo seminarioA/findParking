@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Login from './components/Login';
 import Occupancy from './components/Occupancy';
 import VideoStream from './components/VideoStream';
+import Footer from './components/footer';
 import { getRole } from './api/auth';
 import {
   Container,
@@ -12,7 +13,7 @@ import {
   createTheme
 } from '@mui/material';
 
-const CAMERAS = ['entrada1']; // Puedes agregar más cámaras aquí
+const CAMERAS = ['entrada1'];
 
 const darkTheme = createTheme({
   palette: {
@@ -50,21 +51,22 @@ function App() {
           <Login onLogin={handleLogin} />
         </Box>
       ) : (
-        <Box minHeight="100vh" bgcolor="background.default" display="flex" flexDirection="column">
+        <Box minHeight="100vh" bgcolor="background.default" display="flex" flexDirection="column" sx={{ width: { xs: '98%', md: '90%', lg: '80%' }, maxWidth: { xs: 700, md: 1200 }, mx: 'auto' }}>
           {/* Navbar superior */}
           <Box component="nav"
             display="flex"
             alignItems="center"
             justifyContent="space-between"
+            flexWrap="wrap"
+            gap={2}
             p={3}
             boxShadow={4}
             bgcolor={darkMode ? 'grey.900' : 'grey.100'}
             sx={{
               borderRadius: 6,
               border: `2px solid ${darkMode ? '#222' : '#bbb'}`,
-              mx: 'auto',
               mt: 3,
-              width: { xs: '98%', md: '90%', lg: '80%' },
+              width: '100%',
               maxWidth: { xs: 700, md: 1200 },
               minWidth: 0,
               minHeight: 64,
@@ -75,28 +77,7 @@ function App() {
               FindParking
             </Typography>
             <Box display="flex" alignItems="center" gap={2}>
-              {/* Selector de cámara en el navbar */}
-              <Box sx={{ minWidth: 160 }}>
-                <select
-                  value={cameraId}
-                  onChange={e => setCameraId(e.target.value)}
-                  style={{
-                    background: darkMode ? '#212121' : '#f5f5f5',
-                    color: darkMode ? '#fff' : '#222',
-                    borderRadius: 99,
-                    fontWeight: 600,
-                    padding: '8px 24px',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                    border: 'none',
-                    outline: 'none',
-                    fontSize: 16,
-                  }}
-                >
-                  {CAMERAS.map(cam => (
-                    <option key={cam} value={cam}>{cam}</option>
-                  ))}
-                </select>
-              </Box>
+              {/* ...existing code... */}
               {/* Pills para rol y usuario */}
               {role && (
                 <Box
@@ -208,45 +189,48 @@ function App() {
           </Box>
           {/* Contenido principal centrado y responsivo */}
           <Container maxWidth={false} sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', py: 4, width: { xs: '98%', md: '90%', lg: '80%' }, maxWidth: { xs: 700, md: 1200 } }}>
-          {/* Footer tipo isla */}
-          <Box width="100%" display="flex" justifyContent="center" mt={4} mb={2}>
-            <Box sx={{ width: { xs: '98%', md: '90%', lg: '80%' }, maxWidth: { xs: 700, md: 1200 }, mx: 'auto' }}>
-              <Box component={"footer"}>
-                <Box
-                  component={"div"}
-                  sx={{
-                    bgcolor: darkMode ? 'grey.900' : 'grey.100',
-                    borderRadius: 6,
-                    boxShadow: 4,
-                    border: `2px solid ${darkMode ? '#222' : '#bbb'}`,
-                    p: 3,
-                    textAlign: 'center',
-                    color: darkMode ? 'grey.100' : 'grey.900',
-                    fontWeight: 700,
-                    fontSize: 18,
-                  }}
-                >
-                  Alejandro - ML/Computer Vision Engineer | <a href="mailto:alejandro@email.com" style={{ color: darkMode ? '#90caf9' : '#1976d2', textDecoration: 'none', fontWeight: 700 }}>alejandro@email.com</a>
-                </Box>
-              </Box>
-            </Box>
-          </Box>
             {/* Resumen y grilla de ocupación */}
             <Box width="100%" display="flex" flexDirection={{ xs: 'column', lg: 'row' }} alignItems={{ xs: 'stretch', lg: 'flex-start' }} justifyContent="space-between" gap={2} mb={3}>
               <Box flex={1}>
                 <Occupancy cameraId={cameraId} token={token} darkMode={darkMode} />
               </Box>
-              <Box flex={1}>
-                {(role === 'admin' || role === 'gestor') && (
-                  <VideoStream cameraId={cameraId} token={token} darkMode={darkMode} />
-                )}
+            </Box>
+            {/* Selector de cámara arriba de la isla de video, video siempre debajo y centrado */}
+            <Box width="100%" display="flex" justifyContent="center" mb={2}>
+              <Box sx={{ minWidth: 160 }}>
+                <select
+                  value={cameraId}
+                  onChange={e => setCameraId(e.target.value)}
+                  style={{
+                    background: darkMode ? '#212121' : '#f5f5f5',
+                    color: darkMode ? '#fff' : '#222',
+                    borderRadius: 99,
+                    fontWeight: 600,
+                    padding: '8px 24px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                    border: 'none',
+                    outline: 'none',
+                    fontSize: 16,
+                  }}
+                >
+                  {CAMERAS.map(cam => (
+                    <option key={cam} value={cam}>{cam}</option>
+                  ))}
+                </select>
               </Box>
             </Box>
+            <Box width="100%" display="flex" justifyContent="center">
+              {(role === 'admin' || role === 'gestor') && (
+                <VideoStream cameraId={cameraId} token={token} darkMode={darkMode} />
+              )}
+            </Box>
           </Container>
-        </Box>
-      )}
-    </ThemeProvider>
-  );
+        {/* Footer al final de la página como componente */}
+        <Footer darkMode={darkMode} />
+      </Box>
+    )}
+  </ThemeProvider>
+);
 }
 
 export default App;

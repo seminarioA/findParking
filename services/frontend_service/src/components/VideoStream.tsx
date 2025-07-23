@@ -38,11 +38,24 @@ export default function VideoStream({ cameraId, token, darkMode }: Props) {
 
   return (
     <Box
-      mt={2}
+      mt={maximized ? 0 : 2}
       display="flex"
       justifyContent="center"
-      width="100%"
-      sx={{ position: maximized ? 'fixed' : 'static', top: maximized ? 0 : 'auto', left: maximized ? 0 : 'auto', zIndex: maximized ? 1300 : 'auto', bgcolor: maximized ? (darkMode ? 'grey.900' : 'grey.100') : 'transparent', height: maximized ? '100vh' : 'auto', width: maximized ? '100vw' : '100%' }}
+      width={maximized ? '100vw' : '100%'}
+      sx={{
+        position: maximized ? 'fixed' : 'static',
+        top: maximized ? 0 : 'auto',
+        left: maximized ? 0 : 'auto',
+        zIndex: maximized ? 3000 : 'auto',
+        bgcolor: maximized ? (darkMode ? 'grey.900' : 'grey.100') : 'transparent',
+        height: maximized ? '100vh' : 'auto',
+        width: maximized ? '100vw' : '100%',
+        m: maximized ? 0 : undefined,
+        p: maximized ? 0 : undefined,
+        overflow: maximized ? 'hidden' : 'visible',
+        boxShadow: maximized ? 8 : undefined,
+        border: maximized ? `2px solid ${darkMode ? '#222' : '#bbb'}` : undefined,
+      }}
     >
       <Paper
         elevation={4}
@@ -60,9 +73,11 @@ export default function VideoStream({ cameraId, token, darkMode }: Props) {
           alignItems: 'center',
           height: maximized ? '100vh' : 'auto',
           justifyContent: maximized ? 'center' : 'flex-start',
+          position: 'relative',
         }}
       >
-        <Box width="100%" mb={2} sx={{ mt: maximized ? 2 : 0 }}>
+        {/* Selector de cámara removido, ahora solo en App.tsx */}
+        <Box width="100%" mb={maximized ? 0 : 2} sx={{ mt: maximized ? 2 : 0 }}>
           <Typography variant="h6" fontWeight={700} color={darkMode ? 'grey.100' : 'grey.900'}>
             Video {mode === 'processed' ? 'procesado' : 'original'} cámara {cameraId}
           </Typography>
@@ -72,7 +87,7 @@ export default function VideoStream({ cameraId, token, darkMode }: Props) {
           alt="Video stream"
           style={{ width: maximized ? '100vw' : '100%', maxWidth: maximized ? '100vw' : 900, height: maximized ? '80vh' : 'auto', borderRadius: maximized ? 0 : 12, border: `1px solid ${darkMode ? '#333' : '#bbb'}`, background: darkMode ? '#111' : '#fff', objectFit: maximized ? 'contain' : 'cover' }}
         />
-        <Box display="flex" gap={2} mt={3}>
+        <Box display="flex" gap={2} mt={maximized ? 0 : 3} flexWrap={maximized ? 'nowrap' : 'wrap'} justifyContent={maximized ? 'flex-end' : 'center'} sx={maximized ? { position: 'absolute', bottom: 24, right: 24, zIndex: 3100 } : {}}>
           <Button
             variant="contained"
             color={mode === 'processed' ? 'success' : 'info'}
