@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Header
+from fastapi import APIRouter, Depends, HTTPException, status, Header, Body
 from sqlalchemy.orm import Session
 from .schemas import UserCreate, UserLogin, TokenResponse
 from .models import User
@@ -49,3 +49,22 @@ def verify(Authorization: str = Header(...), db: Session = Depends(get_db)):
     token = Authorization.split(" ")[1]
     payload = verify_token(token, db)
     return {"sub": payload["sub"], "role": payload["role"]}
+
+@router.post("/set-role")
+def set_role(
+    email: str = Body(...),
+    new_role: str = Body(...),
+    Authorization: str = Header(...),
+    db: Session = Depends(get_db)
+):
+    token = Authorization.split(" ")[1]
+    payload = verify_token(token, db)
+    # Solo superadmin puede cambiar roles
+    if payload["role"] != "superadmin":
+        raise HTTPException(status_code=403, detail="No autorizado")
+    user = db.query(User).filter_by(email=email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    user.role = new_role
+    db.commit()
+    return {"msg": f"Rol de {email} actualizado a {new_role}"}
