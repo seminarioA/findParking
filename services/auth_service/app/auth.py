@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Header, Body
 from sqlalchemy.orm import Session
-from schemas import UserCreate, UserLogin, TokenResponse
-from models import User
-from security import (
+from app.schemas import UserCreate, UserLogin, TokenResponse
+from app.models import User
+from app.security import (
     get_db, hash_password, verify_password,
     create_access_token, verify_token
 )

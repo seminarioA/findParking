@@ -7,4 +7,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["gunicorn", "-c", "gunicorn_conf.py", "app.main:app"]
+CMD ["/bin/sh", "-c", "python app/create_admin.py && gunicorn -c gunicorn_conf.py app.main:app"]
