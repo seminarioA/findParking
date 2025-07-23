@@ -1,17 +1,20 @@
-import { useRef, useEffect } from 'react';
-import { getVideoStream } from '../api/video';
-import { Box, Typography, Paper } from '@mui/material';
+import { useRef, useEffect, useState } from 'react';
+import { Box, Typography, Paper, Button } from '@mui/material';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VideoSettingsIcon from '@mui/icons-material/VideoSettings';
 
 interface Props {
   cameraId: string;
   token: string;
+  darkMode: boolean;
 }
 
-export default function VideoStream({ cameraId, token }: Props) {
+export default function VideoStream({ cameraId, token, darkMode }: Props) {
   const imgRef = useRef<HTMLImageElement>(null);
+  const [mode, setMode] = useState<'processed' | 'original'>('processed');
 
   useEffect(() => {
-    const wsUrl = getVideoStream(cameraId);
+    const wsUrl = `/api/video/${cameraId}/${mode === 'original' ? 'raw' : 'processed'}`;
     const ws = new window.WebSocket(wsUrl, token);
     ws.binaryType = 'arraybuffer';
     ws.onopen = () => {
@@ -30,7 +33,7 @@ export default function VideoStream({ cameraId, token }: Props) {
       }
     };
     return () => ws.close();
-  }, [cameraId, token]);
+  }, [cameraId, token, mode]);
 
   return (
     <Box
@@ -46,23 +49,34 @@ export default function VideoStream({ cameraId, token }: Props) {
           borderRadius: 6,
           boxShadow: 4,
           width: '100%',
-          maxWidth: { xs: 700, md: 640 },
+          maxWidth: { xs: 700, md: 1200 },
           mx: 'auto',
-          bgcolor: '#181818',
-          border: '2px solid #222',
+          bgcolor: darkMode ? 'grey.900' : 'grey.100',
+          border: `2px solid ${darkMode ? '#222' : '#bbb'}`,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
         }}
       >
-        <Typography variant="h6" fontWeight={700} mb={2} color="grey.100">
-          Video procesado cámara {cameraId}
-        </Typography>
+        <Box width="100%" mb={2}>
+          <Typography variant="h6" fontWeight={700} color={darkMode ? 'grey.100' : 'grey.900'}>
+            Video {mode === 'processed' ? 'procesado' : 'original'} cámara {cameraId}
+          </Typography>
+        </Box>
         <img
           ref={imgRef}
           alt="Video stream"
-          style={{ width: '100%', maxWidth: 600, borderRadius: 12, border: '1px solid #333', background: '#111' }}
+          style={{ width: '100%', maxWidth: 900, borderRadius: 12, border: `1px solid ${darkMode ? '#333' : '#bbb'}`, background: darkMode ? '#111' : '#fff' }}
         />
+        <Button
+          variant="contained"
+          color={mode === 'processed' ? 'success' : 'info'}
+          onClick={() => setMode(mode === 'processed' ? 'original' : 'processed')}
+          sx={{ borderRadius: 99, fontWeight: 700, mt: 3, px: 3, py: 1.5, boxShadow: 3, gap: 1 }}
+          startIcon={mode === 'processed' ? <VisibilityIcon /> : <VideoSettingsIcon />}
+        >
+          {mode === 'processed' ? 'Ver original' : 'Ver procesado'}
+        </Button>
       </Paper>
     </Box>
   );

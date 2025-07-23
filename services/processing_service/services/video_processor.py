@@ -23,6 +23,9 @@ def process_video(camera_id, stream_url, model, class_list, polygons, device):
             continue
 
         frame = cv2.resize(frame, (1020, 500))
+        # Guardar frame original (crudo) en Redis
+        _, jpeg_raw = cv2.imencode('.jpg', frame)
+        redis_client.set(f"frame_{camera_id}_raw", jpeg_raw.tobytes())
         results = model.predict(frame, device=device)
         occupancy = detect_and_assign(frame, results, class_list, polygons)
         draw_spaces(frame, occupancy, polygons)

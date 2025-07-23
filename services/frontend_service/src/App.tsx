@@ -245,12 +245,11 @@ function App() {
               <Box flex={1}>
                 <Occupancy cameraId={cameraId} token={token} darkMode={darkMode} />
               </Box>
-            </Box>
-            {/* Grilla de ocupación y video */}
-            <Box width="100%" mt={2}>
-              {(role === 'admin' || role === 'gestor') && (
-                <VideoStream cameraId={cameraId} token={token} />
-              )}
+              <Box flex={1}>
+                {(role === 'admin' || role === 'gestor') && (
+                  <VideoStream cameraId={cameraId} token={token} darkMode={darkMode} />
+                )}
+              </Box>
             </Box>
           </Container>
         </Box>
