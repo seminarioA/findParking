@@ -44,9 +44,11 @@ services:
   video_service:
     build: ./services/video_service
     ports:
-      - "8001:8001"
+      - "8004:8004"
     environment:
       - REDIS_HOST=redis
+    env_file:
+      - ./services/video_service/.env
     depends_on:
       - redis
       - auth_service

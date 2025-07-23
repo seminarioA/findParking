@@ -66,7 +66,7 @@ function App() {
               border: `2px solid ${darkMode ? '#222' : '#bbb'}`,
               mx: 'auto',
               mt: 3,
-              width: '100%',
+              width: { xs: '98%', md: '90%', lg: '80%' },
               maxWidth: { xs: 700, md: 1200 },
               minWidth: 0,
               minHeight: 64,
