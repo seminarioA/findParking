@@ -1,11 +1,11 @@
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from .config import JWT_SECRET, ACCESS_TOKEN_EXPIRE_MINUTES
+from config import JWT_SECRET, ACCESS_TOKEN_EXPIRE_MINUTES
 from fastapi import HTTPException, status, Depends
 from sqlalchemy.orm import Session
-from .database import SessionLocal
-from .models import TokenBlacklist
+from database import SessionLocal
+from models import TokenBlacklist
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 ALGORITHM = "HS256"
