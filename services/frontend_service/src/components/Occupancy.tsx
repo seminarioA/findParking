@@ -86,9 +86,35 @@ export default function Occupancy(props: Props) {
           {Object.entries(data.areas).map(([area, value]) => (
             <Paper
               key={area as string}
-              sx={{ p: 1, textAlign: 'center', bgcolor: value ? 'error.dark' : 'success.dark', color: 'common.white' }}
+              sx={{
+                p: 2,
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                bgcolor: value ? 'error.dark' : 'success.dark',
+                color: 'common.white',
+                borderRadius: 4,
+                boxShadow: 3,
+                minWidth: 120,
+                gap: 2,
+                fontWeight: 600,
+                fontSize: 18
+              }}
             >
-              {area}: {value ? 'Ocupado' : 'Libre'}
+              <Box display="flex" alignItems="center" gap={1}>
+                {value ? (
+                  <svg width="24" height="24" fill="currentColor" style={{ verticalAlign: 'middle' }}><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                ) : (
+                  <svg width="24" height="24" fill="currentColor" style={{ verticalAlign: 'middle' }}><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1 15h2v-2h-2v2zm0-4h2V7h-2v6z"/></svg>
+                )}
+                <Typography variant="body1" fontWeight={700}>
+                  {area}
+                </Typography>
+              </Box>
+              <Typography variant="body1" fontWeight={700}>
+                {value ? 'Ocupado' : 'Libre'}
+              </Typography>
             </Paper>
           ))}
         </Box>
