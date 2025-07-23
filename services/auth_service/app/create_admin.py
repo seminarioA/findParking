@@ -1,6 +1,9 @@
-from database import SessionLocal
-from models import User
-from security import hash_password
+from .database import SessionLocal
+from .models import User
+from .security import hash_password
+from .database import engine
+from .models import Base
+Base.metadata.create_all(bind=engine)
 
 db = SessionLocal()
 email = "alejandroseminariomedina@gmail.com"
