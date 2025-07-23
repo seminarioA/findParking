@@ -14,6 +14,15 @@ export default function VideoStream({ cameraId, token }: Props) {
     const wsUrl = getVideoStream(cameraId);
     const ws = new window.WebSocket(wsUrl, token);
     ws.binaryType = 'arraybuffer';
+    ws.onopen = () => {
+      console.log('WebSocket abierto:', wsUrl);
+    };
+    ws.onclose = (event) => {
+      console.warn('WebSocket cerrado:', event.code, event.reason);
+    };
+    ws.onerror = (event) => {
+      console.error('WebSocket error:', event);
+    };
     ws.onmessage = (event) => {
       if (imgRef.current && event.data instanceof ArrayBuffer) {
         const blob = new Blob([event.data], { type: 'image/jpeg' });

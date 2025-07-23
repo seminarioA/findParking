@@ -6,7 +6,7 @@ from app.security import (
     get_db, hash_password, verify_password,
     create_access_token, verify_token
 )
-from blacklist import revoke_token
+from .blacklist import revoke_token
 import uuid
 
 router = APIRouter(prefix="/api/auth")
