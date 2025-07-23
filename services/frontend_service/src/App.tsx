@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Login from './components/Login';
 import Occupancy from './components/Occupancy';
 import VideoStream from './components/VideoStream';
-import Footer from './components/footer';
+import Footer from './components/Footer';
 import { getRole } from './api/auth';
 import {
   Container,
