@@ -241,7 +241,7 @@ function App() {
               </Select>
             </Box>
             {/* Resumen y grilla de ocupación */}
-            <Box width="100%" display="flex" flexDirection={{ xs: 'column', sm: 'row' }} alignItems={{ xs: 'stretch', sm: 'flex-start' }} justifyContent="space-between" gap={2} mb={3}>
+            <Box width="100%" display="flex" flexDirection={{ xs: 'column', lg: 'row' }} alignItems={{ xs: 'stretch', lg: 'flex-start' }} justifyContent="space-between" gap={2} mb={3}>
               <Box flex={1}>
                 <Occupancy cameraId={cameraId} token={token} darkMode={darkMode} />
               </Box>
