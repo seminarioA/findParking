@@ -1,4 +1,3 @@
-# Etapa base: runtime liviano
 FROM python:3.11-slim AS base
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -15,7 +14,7 @@ COPY requirements.txt .
 # -------- INSTALL DEPENDENCIES SIN CACHING ENTRE BUILDS -------------
 RUN pip install --upgrade pip && \
     pip install --prefer-binary --timeout=120 --retries=10 -r requirements.txt
-    
+
 # Copia los recursos necesarios para producción
 COPY resources /app/resources
 
