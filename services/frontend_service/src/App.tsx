@@ -68,7 +68,7 @@ function App() {
           }}
         >
 
-          {/* Navbar superior embebido directamente, sin wrapper adicional */}
+          {/* Navbar embebido */}
           <Box
             component="nav"
             display="flex"
@@ -153,7 +153,7 @@ function App() {
                 </Box>
               )}
 
-              {/* Modo claro/oscuro */}
+              {/* Toggle Dark Mode */}
               <Box
                 sx={{
                   display: 'flex',
@@ -215,8 +215,7 @@ function App() {
               alignItems: 'center',
               justifyContent: 'center',
               py: 4,
-              width: { xs: '98%', md: '90%', lg: '80%' },
-              maxWidth: { xs: 700, md: 1200 }
+              width: '100%'
             }}
           >
             <Box
@@ -264,10 +263,8 @@ function App() {
             </Box>
           </Container>
 
-          {/* Footer alineado y separado */}
-          <Box mt={4} mb={4} width="100%">
-            <Footer darkMode={darkMode} />
-          </Box>
+          {/* Footer correctamente alineado */}
+          <Footer darkMode={darkMode} />
         </Box>
       )}
     </ThemeProvider>
