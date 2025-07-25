@@ -13,7 +13,7 @@ import {
   createTheme
 } from '@mui/material';
 
-const CAMERAS = ['entrada1'];
+// const CAMERAS = ['entrada1'];
 
 const darkTheme = createTheme({
   palette: {
@@ -22,7 +22,7 @@ const darkTheme = createTheme({
 });
 
 function App() {
-  const [cameraId, setCameraId] = useState(CAMERAS[0]);
+  const cameraId = 'entrada1';
   const [token, setToken] = useState<string | null>(null);
   const [role, setRole] = useState<string | null>(null);
   const [darkMode, setDarkMode] = useState(true);
@@ -64,7 +64,8 @@ function App() {
           sx={{
             width: { xs: '98%', md: '90%', lg: '80%' },
             maxWidth: { xs: 700, md: 1200 },
-            mx: 'auto'
+            mx: 'auto',
+            pb: 0 // Ensure no padding-bottom
           }}
         >
 
@@ -81,8 +82,8 @@ function App() {
             bgcolor={darkMode ? 'grey.900' : 'grey.100'}
             sx={{
               borderRadius: 6,
-              border: `2px solid ${darkMode ? '#222' : '#bbb'}`,
-              mt: 3,
+              border: `3px solid ${darkMode ? '#444' : '#888'}`, // Enhanced border visibility
+              mt: 3, // Maintain spacing above navbar
               minHeight: 64,
               position: 'relative',
               width: '100%'
@@ -203,68 +204,67 @@ function App() {
                 </Box>
               </Box>
             </Box>
-          </Box>
 
-          {/* Contenido principal */}
-          <Container
-            maxWidth={false}
-            sx={{
-              flex: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              py: 4,
-              width: '100%'
-            }}
-          >
-            <Box
-              width="100%"
-              display="flex"
-              flexDirection={{ xs: 'column', lg: 'row' }}
-              alignItems={{ xs: 'stretch', lg: 'flex-start' }}
-              justifyContent="space-between"
-              gap={2}
-              mb={3}
+            {/* Contenido principal */}
+            <Container
+              maxWidth={false}
+              sx={{
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                py: 3, // Ensure sufficient spacing between navbar and content
+                width: '100%',
+                border: `3px solid ${darkMode ? '#444' : '#888'}`, // Enhanced border visibility
+                borderRadius: 6
+              }}
             >
-              <Box flex={1}>
-                <Occupancy cameraId={cameraId} token={token} darkMode={darkMode} />
+              <Box
+                width="100%"
+                display="flex"
+                flexDirection={{ xs: 'column', lg: 'row' }}
+                alignItems={{ xs: 'stretch', lg: 'flex-start' }}
+                justifyContent="space-between"
+                gap={2}
+                mb={3}
+                sx={{
+                  border: `3px solid ${darkMode ? '#444' : '#888'}`, // Enhanced border visibility
+                  borderRadius: 6,
+                  p: 2
+                }}
+              >
+                <Box flex={1}>
+                  <Occupancy cameraId={cameraId} token={token} darkMode={darkMode} />
+                </Box>
               </Box>
-            </Box>
 
-            <Box width="100%" display="flex" justifyContent="center" mb={2}>
-              <Box sx={{ minWidth: 160 }}>
-                <select
-                  value={cameraId}
-                  onChange={e => setCameraId(e.target.value)}
-                  style={{
-                    background: darkMode ? '#212121' : '#f5f5f5',
-                    color: darkMode ? '#fff' : '#222',
-                    borderRadius: 99,
-                    fontWeight: 600,
-                    padding: '8px 24px',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                    border: 'none',
-                    outline: 'none',
-                    fontSize: 16,
-                  }}
-                >
-                  {CAMERAS.map(cam => (
-                    <option key={cam} value={cam}>{cam}</option>
-                  ))}
-                </select>
+              {/* Selector de cámara eliminado, solo se usa la cámara por defecto */}
+
+              <Box
+                width="100%"
+                display="flex"
+                justifyContent="center"
+                sx={{ mb: 0 }} // Removed bottom margin
+              >
+                {(role === 'admin' || role === 'gestor') && (
+                  <VideoStream cameraId={cameraId} token={token} darkMode={darkMode} />
+                )}
               </Box>
-            </Box>
 
-            <Box width="100%" display="flex" justifyContent="center">
-              {(role === 'admin' || role === 'gestor') && (
-                <VideoStream cameraId={cameraId} token={token} darkMode={darkMode} />
-              )}
-            </Box>
-          </Container>
-
-          {/* Footer correctamente alineado */}
-          <Footer darkMode={darkMode} />
+              {/* Footer correctamente alineado */}
+              <Footer
+                darkMode={darkMode}
+                sx={{
+                  mt: 2,
+                  width: '100%',
+                  maxWidth: { xs: 700, md: 1200 },
+                  mx: 'auto',
+                  mb: 0, // Removed bottom margin
+                }}
+              />
+            </Container>
+          </Box>
         </Box>
       )}
     </ThemeProvider>

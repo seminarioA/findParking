@@ -1,6 +1,7 @@
 import { Box } from '@mui/material';
+import type { SxProps } from '@mui/material';
 
-function Footer({ darkMode }: { darkMode: boolean }) {
+function Footer({ darkMode, sx }: { darkMode: boolean; sx?: SxProps }) {
   return (
     <Box
       component="footer"
@@ -16,19 +17,10 @@ function Footer({ darkMode }: { darkMode: boolean }) {
         fontWeight: 700,
         fontSize: 18,
         mt: 4,
+        ...sx, // Merge custom styles
       }}
     >
-      Alejandro - ML/Computer Vision Engineer |{' '}
-      <a
-        href="mailto:alejandro@email.com"
-        style={{
-          color: darkMode ? '#90caf9' : '#1976d2',
-          textDecoration: 'none',
-          fontWeight: 700,
-        }}
-      >
-        alejandro@email.com
-      </a>
+      Demo para la Universidad Tecnologica del Peru (UTP)
     </Box>
   );
 }

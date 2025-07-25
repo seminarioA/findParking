@@ -1,4 +1,11 @@
 import { useEffect, useState } from 'react';
+  // Función para síntesis de voz con mensaje simplificado
+  function speakAvailability(free: number) {
+    const msg = free > 0 ? 'Sí, hay espacio disponible' : 'No, no hay espacio disponible';
+    const utter = new window.SpeechSynthesisUtterance(msg);
+    utter.voice = window.speechSynthesis.getVoices().find(voice => voice.name.includes('Google') && voice.name.includes('feminine')) || null;
+    window.speechSynthesis.speak(utter);
+  }
 import { getOccupancy } from '../api/occupancy';
 import { Box, Typography, Paper } from '@mui/material';
 
@@ -71,6 +78,45 @@ export default function Occupancy(props: Props) {
 
   return (
     <>
+      {/* Isla con botón de voz de disponibilidad */}
+      <Box
+        sx={{
+          bgcolor: darkMode ? 'grey.900' : 'grey.100',
+          color: darkMode ? 'common.white' : 'grey.900',
+          borderRadius: 6,
+          boxShadow: 4,
+          p: 2,
+          textAlign: 'center',
+          mb: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 1,
+          width: '100%',
+          maxWidth: { xs: 700, md: 1200 },
+        }}
+      >
+        <Typography variant="h6" fontWeight={700}>
+          Escucha la disponibilidad de espacios
+        </Typography>
+        <button
+          onClick={() => speakAvailability(data.summary.free)}
+          style={{
+            background: darkMode ? '#1976d2' : '#1976d2',
+            color: '#fff',
+            border: 'none',
+            borderRadius: 99,
+            fontWeight: 700,
+            fontSize: 18,
+            padding: '10px 32px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.10)',
+            cursor: 'pointer',
+          }}
+        >
+          🔊 Escuchar disponibilidad
+        </button>
+      </Box>
+
       {/* Isla: Resumen de ocupación */}
       <Box
         sx={{

@@ -77,17 +77,64 @@ export default function VideoStream({ cameraId, token, darkMode }: Props) {
         }}
       >
         {/* Selector de cámara removido, ahora solo en App.tsx */}
-        <Box width="100%" mb={maximized ? 0 : 2} sx={{ mt: maximized ? 2 : 0 }}>
-          <Typography variant="h6" fontWeight={700} color={darkMode ? 'grey.100' : 'grey.900'}>
-            Video {mode === 'processed' ? 'procesado' : 'original'} cámara {cameraId}
+        <Box
+          width="100%"
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+          sx={{
+            textAlign: 'center',
+            mb: 2, // Consistent spacing with other elements
+          }}
+        >
+          <Typography
+            variant="h6"
+            fontWeight={700}
+            color={darkMode ? 'grey.100' : 'grey.900'}
+            sx={{ mb: 2 }}
+          >
+            Video procesado cámara entrada
           </Typography>
+          <img
+            ref={imgRef}
+            alt="Video stream"
+            style={{
+              width: maximized ? '100vw' : '100%',
+              maxWidth: maximized ? '100vw' : 900,
+              height: maximized ? '80vh' : 'auto',
+              borderRadius: maximized ? 0 : 12,
+              border: `1px solid ${darkMode ? '#333' : '#bbb'}`,
+              background: darkMode ? '#111' : '#fff',
+              objectFit: maximized ? 'contain' : 'cover',
+            }}
+          />
         </Box>
-        <img
-          ref={imgRef}
-          alt="Video stream"
-          style={{ width: maximized ? '100vw' : '100%', maxWidth: maximized ? '100vw' : 900, height: maximized ? '80vh' : 'auto', borderRadius: maximized ? 0 : 12, border: `1px solid ${darkMode ? '#333' : '#bbb'}`, background: darkMode ? '#111' : '#fff', objectFit: maximized ? 'contain' : 'cover' }}
-        />
-        <Box display="flex" gap={2} mt={maximized ? 0 : 3} flexWrap={maximized ? 'nowrap' : 'wrap'} justifyContent={maximized ? 'flex-end' : 'center'} sx={maximized ? { position: 'absolute', bottom: 24, right: 24, zIndex: 3100 } : {}}>
+        <Box
+          display={maximized ? 'flex' : 'flex'}
+          gap={2}
+          mt={maximized ? 0 : 3}
+          flexWrap={maximized ? 'wrap' : 'wrap'}
+          justifyContent={maximized ? 'center' : 'center'}
+          alignItems={maximized ? 'flex-end' : 'center'}
+          sx={
+            maximized
+              ? {
+                  position: 'absolute',
+                  bottom: 24,
+                  left: 0,
+                  right: 0,
+                  zIndex: 3100,
+                  width: '100%',
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  justifyContent: 'center',
+                  alignItems: 'flex-end',
+                  gap: 2,
+                }
+              : {}
+          }
+        >
           <Button
             variant="contained"
             color={mode === 'processed' ? 'success' : 'info'}
