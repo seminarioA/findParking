@@ -82,7 +82,7 @@ function App() {
             bgcolor={darkMode ? 'grey.900' : 'grey.100'}
             sx={{
               borderRadius: 6,
-              border: `3px solid ${darkMode ? '#444' : '#888'}`, // Enhanced border visibility
+              border: `2px solid ${darkMode ? '#222' : '#bbb'}`, // Reverted border visibility
               mt: 3, // Maintain spacing above navbar
               minHeight: 64,
               position: 'relative',
@@ -215,9 +215,7 @@ function App() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 py: 3, // Ensure sufficient spacing between navbar and content
-                width: '100%',
-                border: `3px solid ${darkMode ? '#444' : '#888'}`, // Enhanced border visibility
-                borderRadius: 6
+                width: '100%'
               }}
             >
               <Box
@@ -229,9 +227,7 @@ function App() {
                 gap={2}
                 mb={3}
                 sx={{
-                  border: `3px solid ${darkMode ? '#444' : '#888'}`, // Enhanced border visibility
-                  borderRadius: 6,
-                  p: 2
+                  p: 2 // Reverted border visibility
                 }}
               >
                 <Box flex={1}>
