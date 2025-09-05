@@ -1,7 +1,7 @@
 # FindParking
 
-Plataforma de visión por computadora en tiempo real para determinar ocupación de plazas de estacionamiento (libre / ocupada) a partir de streams de video. Implementa microservicios modulares (autenticación, inferencia, estado de ocupación, streaming de video, frontend) con control de acceso basado en JWT, transmisión por WebSocket y Redis como columna vertebral efímera de datos.
 
+FindParking es una plataforma de visión por computadora en tiempo real para determinar ocupación de plazas de estacionamiento (libre / ocupada) a partir de streams de video.
 ---
 
 ## 1. Descripción General
