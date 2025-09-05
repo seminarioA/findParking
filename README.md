@@ -9,6 +9,7 @@
 ##
 ![Computer Vision](https://img.shields.io/badge/Computer_Vision-purple)
 ![Machine Learning](https://img.shields.io/badge/Machine_Learning-blue)
+![Artificial Intelligence](https://img.shields.io/badge/Artificial_Inteligene-green)
 ![Yolov11](https://img.shields.io/badge/YoloV11-orange)
 
 ##
