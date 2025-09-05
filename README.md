@@ -6,7 +6,12 @@
 /_/   /_/_/ /_/\__,_/_/    \__,_/_/  /_/|_/_/_/ /_/\__, /  
                                                   /____/ 
 ```                                                  
---------------------------------------------------------------------------------
+##
+![Computer Vision](https://img.shields.io/badge/Computer_Vision-purple)
+![Machine Learning](https://img.shields.io/badge/Machine_Learning-blue)
+![Yolov11](https://img.shields.io/badge/YoloV11-orange)
+
+##
 
 FindParking es una plataforma que permite determinar la ocupación de plazas de estacionamiento (libre / ocupada) a partir de streams de video. Para ello, hace uso de tecnicas de Vision por Computadora (IA).
 
