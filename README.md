@@ -1,4 +1,11 @@
-# FindParking
+```
+    _______           ______             __   _            
+   / ____(_)___  ____/ / __ \____ ______/ /__(_)___  ____ _
+  / /_  / / __ \/ __  / /_/ / __ `/ ___/ //_/ / __ \/ __ `/
+ / __/ / / / / / /_/ / ____/ /_/ / /  / ,< / / / / / /_/ / 
+/_/   /_/_/ /_/\__,_/_/    \__,_/_/  /_/|_/_/_/ /_/\__, /  
+                                                  /____/ 
+```                                                  
 --------------------------------------------------------------------------------
 
 FindParking es una plataforma de visión por computadora en tiempo real para determinar ocupación de plazas de estacionamiento (libre / ocupada) a partir de streams de video.
