@@ -12,7 +12,7 @@
 ![Artificial Intelligence](https://img.shields.io/badge/Artificial_Inteligence-green)
 ![Yolov11](https://img.shields.io/badge/YoloV11-orange)
 
-##
+## 🦉 FPKv0.5
 
 FindParking es una plataforma que permite determinar la ocupación de plazas de estacionamiento (libre / ocupada) a partir de streams de video. Para ello, hace uso de tecnicas de Vision por Computadora (IA).
 
@@ -36,7 +36,7 @@ docker-compose up --build
 Punto de acceso:
 - Frontend: http://<ip publica/localhost>:3000
 
-## Stack
+## 💻 Stack
 
 ### IA/ML
 ![OpenCV](https://img.shields.io/badge/opencv-%23white.svg?style=for-the-badge&logo=opencv&logoColor=white)
