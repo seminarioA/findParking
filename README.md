@@ -10,6 +10,8 @@
 ![Computer Vision](https://img.shields.io/badge/Computer_Vision-purple)
 ![Machine Learning](https://img.shields.io/badge/Machine_Learning-blue)
 ![Artificial Intelligence](https://img.shields.io/badge/Artificial_Inteligence-green)
+![Object Detection](https://img.shields.io/badge/Object_Detection-yellow)
+![MLOps](https://img.shields.io/badge/MLOps-red)
 ![Yolov11](https://img.shields.io/badge/YoloV11-orange)
 
 ## 🦉 FPKv0.5
