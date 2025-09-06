@@ -51,14 +51,14 @@ git clone https://github.com/seminarioA/findParking.git .
 #### Levantar microservicios
 
 ```bash
-./deploy.sh
+docker-compose up --build
 ```
 
 ### Instalacion automatica
 
 ### Ejecutar el script
 ```bash
-docker-compose up --build
+./deploy.sh
 ```
 
 ### ¿Y como accedo al servicio?
