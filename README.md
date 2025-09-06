@@ -56,7 +56,7 @@ docker-compose up --build
 
 ### Instalacion automatica
 
-### Ejecutar el script
+#### Ejecutar el script
 ```bash
 ./deploy.sh
 ```
