@@ -93,10 +93,10 @@ Redes:
 [![LinkedIn][1]][2] [![GitHub][3]][4]
 
 [1]:  https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white
-[2]:  https://www.linkedin.com/in/alejandroseminariomedina/]
+[2]:  https://www.linkedin.com/in/alejandroseminariomedina/
 
 [3]:  https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white
-[4]:  https://github.com/seminarioA]
+[4]:  https://github.com/seminarioA
 
 
 ##
