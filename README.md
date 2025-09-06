@@ -32,19 +32,37 @@ Tecnicamente, FindParking captura frames de cámaras configuradas, ejecuta detec
 
 ## 👩🏻‍🔬 Instalación
 
-### Clonar repositorio
+¡Existen dos maneras!
+
+### Instalación manual
+
+#### Instalar git
+```bash
+sudo apt update
+sudo apt install git
+```
+
+#### Clonar repositorio
 ```bash
 git clone https://github.com/seminarioA/findParking.git .
 
 ```
 
-### Levantar microservicios
+#### Levantar microservicios
 
+```bash
+./deploy.sh
+```
+
+### Instalacion automatica
+
+### Ejecutar el script
 ```bash
 docker-compose up --build
 ```
 
-Punto de acceso:
+### ¿Y como accedo al servicio?
+El punto de acceso es:
 - Frontend: http://<ip publica/localhost>:3000
 
 ## 💻 Stack
