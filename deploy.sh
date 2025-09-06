@@ -21,12 +21,8 @@ sudo apt install -y git
 mkdir -p ~/findParking
 cd ~/findParking
 
-# Clona tu repo privado usando token de GitHub (personal access token clásico)
-TOKEN_GITHUB="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"
-git clone https://$TOKEN_GITHUB@github.com/seminarioA/findParking.git .
-# Borra el token de la variable y del historial para mayor seguridad
-unset TOKEN_GITHUB
-history -d $(history 1 | grep TOKEN_GITHUB | awk '{print $1}') 2>/dev/null || true
+# Clona el repo de GitHub
+git clone https://github.com/seminarioA/findParking.git .
 
 # Construye y levanta los contenedores
 sudo docker-compose up --build -d
