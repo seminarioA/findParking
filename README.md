@@ -18,10 +18,10 @@
 
 FindParking es una plataforma que permite determinar la ocupación de plazas de estacionamiento (libre / ocupada) a partir de streams de video. Para ello, hace uso de tecnicas de Vision por Computadora (IA).
 
-- [Acerca de](#👩🏻‍💻-Acerca-de)
-- [Installation](#👩🏻‍🔬-Instalacion)
-  - [Clonar Repositorio](#Clonar-repositorio)
-  - [Levantar Microservicios](#Levantar-Microservicios)
+- [Acerca de](#-acerca-de)
+- [Installation](#-instalacion)
+  - [Clonar Repositorio](#-clonar-repositorio)
+  - [Levantar Microservicios](#-levantar-microservicios)
 - [License](#license)
 
 <!-- tocstop -->
