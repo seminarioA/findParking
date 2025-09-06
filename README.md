@@ -27,8 +27,6 @@ FindParking es una plataforma que permite determinar la ocupación de plazas de 
 - [Contribuyentes](#-contribuyentes)
 
 
-<!-- tocstop -->
-
 ## 👩🏻‍💻 Acerca de
 Tecnicamente, FindParking captura frames de cámaras configuradas, ejecuta detección de vehículos con YOLO + OpenCV, mapea detecciones a plazas definidas y expone la ocupación actual mediante REST y WebSockets.
 
@@ -140,6 +138,7 @@ Redes:
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠡⢤⣽⠃⣘⡁⠀⠀⠀⠈⠉⠉⠀⠀⠀⣠⠟⢉⣍⣉⠉⢙⣿⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠤⣤⣤⠤⢀⣒⠒⠀⠀⠀⠀⠀⠀⠀⠀⠘⠛⠻⡿⠃⣾⣿⣿⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⢉⢻⠶⡃⣠⣶⡾⠇⡏⠀
-```
+
 "ὦ παῖ, γλαυκῶπις Ἀθάνα σοὶ ξυμμαχεῖ."
 - Esquilo, Eumenides v. 995. Ed. H. Weir Smyth, Aeschyli Tragoediae, Oxford Classical Texts, 1926.
+```
