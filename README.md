@@ -21,8 +21,8 @@ FindParking es una plataforma que permite determinar la ocupación de plazas de 
 
 - [Acerca de](#-acerca-de)
 - [Instalación](#-instalación)
-  - [Clonar Repositorio](#clonar-repositorio)
-  - [Levantar Microservicios](#levantar-microservicios)
+  - [Instalación manual](#instalación-manual)
+  - [Instalación automatica](#instalación-automatica)
 - [Stack](#-stack)
 - [Contribuyentes](#-contribuyentes)
 
@@ -54,7 +54,7 @@ git clone https://github.com/seminarioA/findParking.git .
 docker-compose up --build
 ```
 
-### Instalacion automatica
+### Instalación automatica
 
 #### Ejecutar el script
 ```bash
