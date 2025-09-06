@@ -25,6 +25,10 @@ Tecnicamente, FindParking captura frames de cámaras configuradas, ejecuta detec
 ## 👩🏻‍🔬Instalacion
 
 ### Clonar repositorio
+```bash
+git clone https://github.com/seminarioA/findParking.git .
+
+```
 
 ### Levantar microservicios
 
