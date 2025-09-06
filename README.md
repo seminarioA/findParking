@@ -73,4 +73,15 @@ Punto de acceso:
 ![Azure](https://img.shields.io/badge/azure-%230072C6.svg?style=for-the-badge&logo=microsoftazure&logoColor=white)
 
 ## 👩🏻‍🔬 Contribuyentes
-### 🧑🏻‍🔬 Alejandro Seminario: MLOps, Computer Vision Engineer, ML;TL (Machine Learning Tech Lead).
+### 🧑🏻‍🔬 Alejandro Seminario
+![Computer Vision Engineer](https://img.shields.io/badge/Computer_Vision_Egineer-purple)
+![MLOps](https://img.shields.io/badge/MLOps-red)
+![Machine Learning Tech Lead](https://img.shields.io/badge/ML;TL-Machine_Learning_Tech_Lead-blue)
+
+Redes:
+
+![LinkedIn](https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white)
+![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)
+
+##
+
