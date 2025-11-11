@@ -5,15 +5,20 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-# Instala libGL.so.1 y libgthread-2.0.so.0 para OpenCV
-RUN apt-get update && apt-get install -y libgl1-mesa-glx libglib2.0-0 && rm -rf /var/lib/apt/lists/*
+# Instala dependencias del sistema necesarias para OpenCV
+# (libGL.so.1 y libgthread-2.0.so.0)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        libgl1 \
+        libglib2.0-0 && \
+    rm -rf /var/lib/apt/lists/*
 
 # Copia solo el requirements para cachear instalación de paquetes
 COPY requirements.txt .
 
-# -------- INSTALL DEPENDENCIES SIN CACHING ENTRE BUILDS -------------
+# Instala dependencias Python sin cachear entre builds
 RUN pip install --upgrade pip && \
-    pip install --prefer-binary --timeout=120 --retries=10 -r requirements.txt
+    pip install --no-cache-dir --prefer-binary --timeout=120 --retries=10 -r requirements.txt
 
 # Copia los recursos necesarios para producción
 COPY resources /app/resources
@@ -21,4 +26,4 @@ COPY resources /app/resources
 # Copia el resto del código
 COPY . .
 
-CMD ["python","main.py"]
+CMD ["python", "main.py"]
