@@ -45,7 +45,11 @@ sudo apt install git
 #### Clonar repositorio
 ```bash
 git clone https://github.com/seminarioA/findParking.git
+```
 
+#### Abrir Carpeta
+```bash
+cd findParking
 ```
 
 #### Levantar microservicios
