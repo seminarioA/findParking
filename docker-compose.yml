@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   redis:
     image: redis:7
@@ -20,7 +22,7 @@ services:
     restart: unless-stopped
 
   auth_service:
-    build: ./services/auth_service
+    image: aleseminario/findparking-auth_service:latest
     ports:
       - "8000:8000"
     environment:
@@ -34,7 +36,7 @@ services:
     restart: unless-stopped
 
   processing_service:
-    build: ./services/processing_service
+    image: aleseminario/findparking-processing_service:latest
     environment:
       - REDIS_HOST=redis
     depends_on:
@@ -42,7 +44,7 @@ services:
     restart: unless-stopped
 
   video_service:
-    build: ./services/video_service
+    image: aleseminario/findparking-video_service:latest
     ports:
       - "8004:8004"
     environment:
@@ -55,7 +57,7 @@ services:
     restart: unless-stopped
 
   occupancy_service:
-    build: ./services/occupancy_service
+    image: aleseminario/findparking-occupancy_service:latest
     ports:
       - "8002:8000"
     environment:
@@ -68,7 +70,7 @@ services:
     restart: unless-stopped
 
   video_stream_service:
-    build: ./services/video_stream_service
+    image: aleseminario/findparking-video_stream_service:latest
     ports:
       - "8010:8010"
     environment:
@@ -94,13 +96,13 @@ services:
     restart: unless-stopped
 
   frontend_service:
-    build: ./services/frontend_service
+    image: aleseminario/findparking-frontend_service:latest
     ports:
       - "3000:80"
     depends_on:
       - api_gateway
     restart: unless-stopped
-    
+
 volumes:
   redis_data:
   postgres_data:
