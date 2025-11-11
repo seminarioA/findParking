@@ -44,7 +44,7 @@ sudo apt install git
 
 #### Clonar repositorio
 ```bash
-git clone https://github.com/seminarioA/findParking.git .
+git clone https://github.com/seminarioA/findParking.git
 
 ```
 
