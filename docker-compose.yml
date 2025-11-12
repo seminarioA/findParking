@@ -94,9 +94,9 @@ services:
       - occupancy_service
       - auth_service
     restart: unless-stopped
-
+    
   frontend_service:
-    image: aleseminario/findparking-frontend_service:latest
+    build: ./services/frontend_service
     ports:
       - "3000:80"
     depends_on:

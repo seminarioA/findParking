@@ -1,209 +1,185 @@
-import { useState, useEffect } from 'react';
-import {
-  Box,
-  Typography,
-  TextField,
-  Button,
-  Paper,
-  CircularProgress,
-  InputAdornment,
-  Fade,
-  Stack
-} from '@mui/material';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
-import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { register } from '../api/register';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { ArrowLeft, Lock, Mail, UserPlus, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { register } from '@/lib/api/auth';
+import { registerSchema, type RegisterInput } from '@/lib/validation';
+import { useToast } from '@/hooks/use-toast';
 
-interface Props {
+interface RegisterProps {
   onBack: () => void;
 }
 
-export default function Register({ onBack }: Props) {
-  const [mounted, setMounted] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirm, setConfirm] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
-  const [globalMessage, setGlobalMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+export default function Register({ onBack }: RegisterProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const { toast } = useToast();
 
-  useEffect(() => {
-    const timeout = setTimeout(() => setMounted(true), 100);
-    return () => clearTimeout(timeout);
-  }, []);
+  const form = useForm<RegisterInput>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+      confirmPassword: '',
+    },
+  });
 
-  const validate = () => {
-    const errors: { [key: string]: string } = {};
-    if (!email.trim()) errors.email = 'El correo es obligatorio.';
-    else if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/i.test(email)) errors.email = 'Correo no válido.';
-    if (!password.trim()) errors.password = 'La contraseña es obligatoria.';
-    if (!confirm.trim()) errors.confirm = 'Debe confirmar la contraseña.';
-    if (password && confirm && password !== confirm) errors.confirm = 'Las contraseñas no coinciden.';
-    return errors;
-  };
+  const onSubmit = async (data: RegisterInput) => {
+    setIsLoading(true);
+    setError('');
 
-  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setFieldErrors({});
-    setGlobalMessage(null);
-
-    const errors = validate();
-    if (Object.keys(errors).length > 0) {
-      setFieldErrors(errors);
-      return;
-    }
-
-    setLoading(true);
     try {
-      await register(email, password); // Solo email y password
-      setGlobalMessage({ type: 'success', text: 'Usuario registrado correctamente.' });
-      setEmail('');
-      setPassword('');
-      setConfirm('');
-    } catch {
-      setGlobalMessage({ type: 'error', text: 'No se pudo registrar el usuario.' });
+      await register({ 
+        email: data.email, 
+        password: data.password,
+        confirmPassword: data.confirmPassword
+      });
+      toast({
+        title: 'Registro exitoso',
+        description: 'Tu cuenta ha sido creada. Ahora puedes iniciar sesión.',
+      });
+      form.reset();
+      setTimeout(() => onBack(), 2000);
+    } catch (err) {
+      setError('No se pudo registrar el usuario. Por favor, intenta nuevamente.');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <Box
-      minHeight="100vh"
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      bgcolor="background.default"
-      px={2}
-    >
-      <Fade in={mounted} timeout={500}>
-        <Paper
-          elevation={10}
-          sx={{
-            p: { xs: 3, sm: 5 },
-            maxWidth: 400,
-            width: '100%',
-            borderRadius: 4,
-            bgcolor: 'background.paper',
-            textAlign: 'center',
-          }}
-        >
-          <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <Card className="w-full max-w-md animate-fade-in">
+        <CardHeader className="space-y-2">
+          <div className="flex items-center justify-between">
             <Button
-              startIcon={<ArrowBackIcon />}
+              variant="ghost"
+              size="sm"
               onClick={onBack}
-              sx={{
-                textTransform: 'none',
-                fontWeight: 600,
-              }}
+              disabled={isLoading}
+              className="gap-2"
             >
+              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
               Volver
             </Button>
-            <PersonAddAltIcon color="primary" sx={{ fontSize: 32 }} />
-          </Stack>
+            <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
+              <UserPlus className="h-5 w-5 text-primary-foreground" aria-hidden="true" />
+            </div>
+          </div>
+          <CardTitle className="text-2xl font-bold text-center">Crear cuenta</CardTitle>
+          <CardDescription className="text-center">
+            Completa el formulario para registrarte
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" noValidate>
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Correo electrónico</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                        <Input
+                          {...field}
+                          type="email"
+                          placeholder="tu@correo.com"
+                          className="pl-10"
+                          autoComplete="email"
+                          disabled={isLoading}
+                          aria-label="Correo electrónico"
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <Typography variant="h5" fontWeight={700}>
-            Crear cuenta
-          </Typography>
-          <Typography variant="body2" color="text.secondary" mt={0.5} mb={3}>
-            Ingresa tus datos para registrarte
-          </Typography>
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Contraseña</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                        <Input
+                          {...field}
+                          type="password"
+                          placeholder="••••••••"
+                          className="pl-10"
+                          autoComplete="new-password"
+                          disabled={isLoading}
+                          aria-label="Contraseña"
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <form onSubmit={handleRegister} noValidate>
-            <TextField
-              label="Correo"
-              fullWidth
-              margin="dense"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              error={!!fieldErrors.email}
-              helperText={fieldErrors.email || ' '}
-              type="email"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <EmailOutlinedIcon color="action" />
-                  </InputAdornment>
-                ),
-              }}
-            />
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirmar contraseña</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                        <Input
+                          {...field}
+                          type="password"
+                          placeholder="••••••••"
+                          className="pl-10"
+                          autoComplete="new-password"
+                          disabled={isLoading}
+                          aria-label="Confirmar contraseña"
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <TextField
-              label="Contraseña"
-              fullWidth
-              margin="dense"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              type="password"
-              error={!!fieldErrors.password}
-              helperText={fieldErrors.password || ' '}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <LockOutlinedIcon color="action" />
-                  </InputAdornment>
-                ),
-              }}
-            />
-
-            <TextField
-              label="Confirmar contraseña"
-              fullWidth
-              margin="dense"
-              value={confirm}
-              onChange={e => setConfirm(e.target.value)}
-              type="password"
-              error={!!fieldErrors.confirm}
-              helperText={fieldErrors.confirm || ' '}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <LockOutlinedIcon color="action" />
-                  </InputAdornment>
-                ),
-              }}
-            />
-
-            {globalMessage && (
-              <Typography
-                variant="body2"
-                mt={1}
-                sx={{
-                  color: globalMessage.type === 'error' ? 'error.main' : 'success.main',
-                }}
-              >
-                {globalMessage.text}
-              </Typography>
-            )}
-
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-              sx={{
-                mt: 3,
-                py: 1.4,
-                fontWeight: 'bold',
-                fontSize: 16,
-                textTransform: 'none',
-              }}
-              disabled={loading}
-            >
-              {loading ? (
-                <>
-                  <CircularProgress size={22} color="inherit" sx={{ mr: 1 }} />
-                  Registrando...
-                </>
-              ) : (
-                'Registrar'
+              {error && (
+                <Alert variant="destructive" role="alert">
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
               )}
-            </Button>
-          </form>
-        </Paper>
-      </Fade>
-      </Box>
+
+              <Button
+                type="submit"
+                className="w-full"
+                size="lg"
+                disabled={isLoading}
+                aria-busy={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+                    Registrando...
+                  </>
+                ) : (
+                  'Crear cuenta'
+                )}
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

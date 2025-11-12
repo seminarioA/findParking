@@ -1,117 +1,122 @@
-# React + TypeScript + Vite
+# FindParking - Sistema de Monitoreo Inteligente de Estacionamiento
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Sistema de monitoreo en tiempo real de espacios de estacionamiento desarrollado para la Universidad Tecnológica del Perú (UTP).
 
-Currently, two official plugins are available:
+## ✨ Características Principales
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🔐 **Autenticación segura** con validación robusta (Zod + React Hook Form)
+- 📊 **Monitoreo en tiempo real** vía WebSockets con reconexión automática
+- 🎥 **Streaming de video** procesado y original en tiempo real
+- 🔊 **Síntesis de voz** para accesibilidad (WCAG 2.1 AA)
+- 🌓 **Modo oscuro/claro** con preferencia persistente
+- 📱 **Diseño 100% responsive** (móvil, tablet, escritorio)
+- 🔒 **Control de roles** (admin, gestor, usuario)
+- ♿ **Accesibilidad completa** con ARIA labels y navegación por teclado
 
-## Expanding the ESLint configuration
+## 🛠️ Stack Tecnológico
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Frontend**: React 18 + TypeScript + Vite
+- **UI**: Tailwind CSS + shadcn/ui
+- **Validación**: Zod
+- **Formularios**: React Hook Form
+- **Comunicación**: WebSockets + REST API
+- **Estándares**: WCAG 2.1 AA, ISO 9241 (ergonomía)
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 📦 Estructura del Proyecto
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+```
+src/
+├── components/          # Componentes UI reutilizables
+│   ├── Login.tsx       # Autenticación
+│   ├── Register.tsx    # Registro de usuarios
+│   ├── Navbar.tsx      # Navegación principal
+│   ├── Occupancy.tsx   # Dashboard de ocupación
+│   ├── VideoStream.tsx # Transmisión de video
+│   └── Footer.tsx      # Pie de página
+├── hooks/              # Custom React hooks
+│   ├── useWebSocket.ts # Gestión de WebSockets
+│   └── useSpeechSynthesis.ts # Síntesis de voz
+├── lib/                
+│   ├── api/           # Cliente API REST
+│   └── validation.ts  # Esquemas Zod
+├── pages/             
+│   ├── Index.tsx      # Punto de entrada
+│   └── Dashboard.tsx  # Dashboard principal
+├── types/             # Tipos TypeScript
+└── utils/             # Utilidades
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🚀 Instalación y Desarrollo
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```sh
+# Clonar el repositorio
+git clone <YOUR_GIT_URL>
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+# Navegar al directorio
+cd <YOUR_PROJECT_NAME>
 
-# Frontend Service - FindParking
-
-Este microservicio provee una interfaz web moderna para consumir los servicios de ocupación y video.
-
-## Características
-
-- Login con JWT
-- Visualización de ocupación de espacios (REST API)
-- Streaming de video en tiempo real (WebSocket)
-- UI con React, Vite, TypeScript y Material UI
-
-## Endpoints consumidos
-
-- `occupancy_service`: `/api/occupancy/{camera_id}` (GET)
-- `video_service`: `/api/video/{camera_id}/processed` (WebSocket)
-
-## Desarrollo
-
-```bash
+# Instalar dependencias
 npm install
+
+# Iniciar servidor de desarrollo
 npm run dev
 ```
 
-## Producción
+## 🔑 Roles de Usuario
 
-Incluye Dockerfile para despliegue.
+- **Usuario**: Visualización de ocupación de espacios
+- **Gestor**: Usuario + acceso a streaming de video
+- **Admin**: Todos los permisos
 
-## Personalización
+## ♿ Accesibilidad (WCAG 2.1 AA)
 
-Configura las URLs de los microservicios en `.env` si es necesario.
+- ✅ Navegación completa por teclado
+- ✅ ARIA labels y roles semánticos
+- ✅ Contraste de colores AAA
+- ✅ Síntesis de voz para datos críticos
+- ✅ Textos alternativos descriptivos
+- ✅ Estados de carga accesibles
+- ✅ Mensajes de error claros
 
----
+## 🔒 Seguridad
 
-# FindParking
+- Validación de inputs (cliente + servidor)
+- Sanitización de datos
+- Tokens JWT con expiración
+- WebSockets autenticados
+- Sin datos sensibles en localStorage
+- HTTPS obligatorio en producción
 
-Sistema de visión por computadora para detección en tiempo real de espacios de estacionamiento, basado en microservicios, Docker y buenas prácticas de producción.
+## 📱 Compatibilidad
 
-## 🚗 Arquitectura de Producción
+**Navegadores**: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
+**Dispositivos**: Desktop, Laptop, Tablet, Móvil (375px+)
 
-### Microservicios
+## 📊 Mejoras de Producción Implementadas
 
-- **auth_service**: Autenticación y emisión de JWT.
-- **occupancy_service**: Consulta y gestión de ocupación de espacios.
-- **video_service**: Streaming y procesamiento de video (WebSocket).
-- **processing_service**: Detección de vehículos con YOLO/OpenCV.
-- **api_gateway (NGINX)**: Proxy reverso, balanceo y seguridad.
-- **redis**: Almacenamiento temporal y cache.
+✅ Migración completa de Material-UI a Tailwind CSS + shadcn/ui
+✅ TypeScript con tipos estrictos (sin `any`)
+✅ Validación robusta con Zod
+✅ WebSockets con reconexión automática
+✅ Manejo de errores profesional
+✅ Accesibilidad WCAG 2.1 AA completa
+✅ SEO optimizado (meta tags, títulos, descripciones)
+✅ Diseño responsive real
+✅ Design tokens consistentes
+✅ Componentes modulares reutilizables
+✅ Hooks personalizados para lógica compleja
+✅ Código limpio y mantenible
+
+## 🎯 Estándares Cumplidos
+
+- **ISO 9241-110**: Principios de diálogo (ergonomía)
+- **ISO 9241-171**: Accesibilidad software
+- **WCAG 2.1 AA**: Accesibilidad web
+- **ES6+**: JavaScript moderno
+- **TypeScript strict mode**: Seguridad de tipos
+- **Semantic HTML**: Estructura semántica
+
+## 📄 Proyecto Lovable
+
+**URL**: https://lovable.dev/projects/9b833147-1790-4681-bff0-5432431658d4

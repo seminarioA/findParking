@@ -1,28 +1,16 @@
-import { Box } from '@mui/material';
-import type { SxProps } from '@mui/material';
+import { Card, CardContent } from '@/components/ui/card';
 
-function Footer({ darkMode, sx }: { darkMode: boolean; sx?: SxProps }) {
+export default function Footer() {
   return (
-    <Box
-      component="footer"
-      sx={{
-        width: '100%',
-        bgcolor: darkMode ? 'grey.900' : 'grey.100',
-        borderRadius: 6,
-        boxShadow: 4,
-        border: `2px solid ${darkMode ? '#222' : '#bbb'}`,
-        p: 3,
-        textAlign: 'center',
-        color: darkMode ? 'grey.100' : 'grey.900',
-        fontWeight: 700,
-        fontSize: 18,
-        mt: 4,
-        ...sx, // Merge custom styles
-      }}
-    >
-      Demo para la Universidad Tecnologica del Peru (UTP)
-    </Box>
+    <Card className="w-full mt-8" role="contentinfo">
+      <CardContent className="p-6 text-center">
+        <p className="text-sm font-semibold text-muted-foreground">
+          Demo para la Universidad Tecnológica del Perú (UTP)
+        </p>
+        <p className="text-xs text-muted-foreground mt-2">
+          © {new Date().getFullYear()} FindParking. Sistema de monitoreo de estacionamiento inteligente.
+        </p>
+      </CardContent>
+    </Card>
   );
 }
-
-export default Footer;

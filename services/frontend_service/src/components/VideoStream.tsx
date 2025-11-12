@@ -1,170 +1,144 @@
 import { useRef, useEffect, useState } from 'react';
-import { Box, Typography, Paper, Button } from '@mui/material';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VideoSettingsIcon from '@mui/icons-material/VideoSettings';
+import { Maximize2, Minimize2, Video, Eye } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
-interface Props {
+interface VideoStreamProps {
   cameraId: string;
   token: string;
-  darkMode: boolean;
 }
 
-export default function VideoStream({ cameraId, token, darkMode }: Props) {
+export default function VideoStream({ cameraId, token }: VideoStreamProps) {
   const imgRef = useRef<HTMLImageElement>(null);
   const [mode, setMode] = useState<'processed' | 'original'>('processed');
   const [maximized, setMaximized] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    const wsUrl = `/api/video/${cameraId}/${mode === 'original' ? 'raw' : 'processed'}`;
-    const ws = new window.WebSocket(wsUrl, token);
-    ws.binaryType = 'arraybuffer';
-    ws.onopen = () => {
-      console.log('WebSocket abierto:', wsUrl);
-    };
-    ws.onclose = (event) => {
-      console.warn('WebSocket cerrado:', event.code, event.reason);
-    };
-    ws.onerror = (event) => {
-      console.error('WebSocket error:', event);
-    };
-    ws.onmessage = (event) => {
-      if (imgRef.current && event.data instanceof ArrayBuffer) {
-        const blob = new Blob([event.data], { type: 'image/jpeg' });
-        imgRef.current.src = URL.createObjectURL(blob);
-      }
-    };
-    return () => ws.close();
+    const endpoint = mode === 'original' ? 'raw' : 'processed';
+    const wsUrl = `/api/video/${cameraId}/${endpoint}`;
+    
+    try {
+      const ws = new WebSocket(wsUrl, token);
+      ws.binaryType = 'arraybuffer';
+
+      ws.onopen = () => {
+        setError('');
+      };
+
+      ws.onmessage = (event) => {
+        if (imgRef.current && event.data instanceof ArrayBuffer) {
+          const blob = new Blob([event.data], { type: 'image/jpeg' });
+          const url = URL.createObjectURL(blob);
+          if (imgRef.current.src) {
+            URL.revokeObjectURL(imgRef.current.src);
+          }
+          imgRef.current.src = url;
+        }
+      };
+
+      ws.onerror = () => {
+        setError('Error de conexión con el video en tiempo real');
+      };
+
+      ws.onclose = (event) => {
+        if (event.code !== 1000) {
+          setError('Conexión de video cerrada inesperadamente');
+        }
+      };
+
+      return () => {
+        ws.close();
+      };
+    } catch (err) {
+      setError('No se pudo establecer conexión con el video');
+    }
   }, [cameraId, token, mode]);
 
+  const toggleMode = () => {
+    setMode((prev) => (prev === 'processed' ? 'original' : 'processed'));
+  };
+
+  const toggleMaximize = () => {
+    setMaximized((prev) => !prev);
+  };
+
+  const containerClasses = maximized
+    ? 'fixed inset-0 z-50 bg-background flex items-center justify-center p-0'
+    : 'w-full';
+
   return (
-    <Box
-      mt={maximized ? 0 : 2}
-      display="flex"
-      justifyContent="center"
-      width={maximized ? '100vw' : '100%'}
-      sx={{
-        position: maximized ? 'fixed' : 'static',
-        top: maximized ? 0 : 'auto',
-        left: maximized ? 0 : 'auto',
-        zIndex: maximized ? 3000 : 'auto',
-        bgcolor: maximized ? (darkMode ? 'grey.900' : 'grey.100') : 'transparent',
-        height: maximized ? '100vh' : 'auto',
-        width: maximized ? '100vw' : '100%',
-        m: maximized ? 0 : undefined,
-        p: maximized ? 0 : undefined,
-        overflow: maximized ? 'hidden' : 'visible',
-        boxShadow: maximized ? 8 : undefined,
-        border: maximized ? `2px solid ${darkMode ? '#222' : '#bbb'}` : undefined,
-      }}
-    >
-      <Paper
-        elevation={4}
-        sx={{
-          p: maximized ? 0 : 3,
-          borderRadius: maximized ? 0 : 6,
-          boxShadow: 4,
-          width: '100%',
-          maxWidth: maximized ? '100vw' : { xs: 700, md: 1200 },
-          mx: 'auto',
-          bgcolor: darkMode ? 'grey.900' : 'grey.100',
-          border: `2px solid ${darkMode ? '#222' : '#bbb'}`,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          height: maximized ? '100vh' : 'auto',
-          justifyContent: maximized ? 'center' : 'flex-start',
-          position: 'relative',
-        }}
-      >
-        {/* Selector de cámara removido, ahora solo en App.tsx */}
-        <Box
-          width="100%"
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-          sx={{
-            textAlign: 'center',
-            mb: 2, // Consistent spacing with other elements
-          }}
-        >
-          <Typography
-            variant="h6"
-            fontWeight={700}
-            color={darkMode ? 'grey.100' : 'grey.900'}
-            sx={{ mb: 2 }}
-          >
-            Video procesado cámara entrada
-          </Typography>
-          <img
-            ref={imgRef}
-            alt="Video stream"
-            style={{
-              width: maximized ? '100vw' : '100%',
-              maxWidth: maximized ? '100vw' : 900,
-              height: maximized ? '80vh' : 'auto',
-              borderRadius: maximized ? 0 : 12,
-              border: `1px solid ${darkMode ? '#333' : '#bbb'}`,
-              background: darkMode ? '#111' : '#fff',
-              objectFit: maximized ? 'contain' : 'cover',
-            }}
-          />
-        </Box>
-        <Box
-          display={maximized ? 'flex' : 'flex'}
-          gap={2}
-          mt={maximized ? 0 : 3}
-          flexWrap={maximized ? 'wrap' : 'wrap'}
-          justifyContent={maximized ? 'center' : 'center'}
-          alignItems={maximized ? 'flex-end' : 'center'}
-          sx={
-            maximized
-              ? {
-                  position: 'absolute',
-                  bottom: 24,
-                  left: 0,
-                  right: 0,
-                  zIndex: 3100,
-                  width: '100%',
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
-                  justifyContent: 'center',
-                  alignItems: 'flex-end',
-                  gap: 2,
-                }
-              : {}
-          }
-        >
-          <Button
-            variant="contained"
-            color={mode === 'processed' ? 'success' : 'info'}
-            onClick={() => setMode(mode === 'processed' ? 'original' : 'processed')}
-            sx={{ borderRadius: 99, fontWeight: 700, px: 3, py: 1.5, boxShadow: 3, gap: 1 }}
-            startIcon={mode === 'processed' ? <VisibilityIcon /> : <VideoSettingsIcon />}
-          >
-            {mode === 'processed' ? 'Ver original' : 'Ver procesado'}
-          </Button>
-          {!maximized ? (
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => setMaximized(true)}
-              sx={{ borderRadius: 99, fontWeight: 700, px: 3, py: 1.5, boxShadow: 3, gap: 1 }}
-            >
-              Maximizar
-            </Button>
+    <div className={containerClasses} role="region" aria-label="Transmisión de video en vivo">
+      <Card className={maximized ? 'w-full h-full rounded-none border-0' : 'w-full'}>
+        <CardHeader className={maximized ? 'absolute top-4 left-4 right-4 z-10 bg-card/90 backdrop-blur rounded-lg' : ''}>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-base sm:text-lg">
+              Video {mode === 'processed' ? 'procesado' : 'original'} - Cámara {cameraId}
+            </CardTitle>
+            {maximized && (
+              <Button
+                onClick={toggleMaximize}
+                size="icon"
+                variant="secondary"
+                aria-label="Salir de pantalla completa"
+              >
+                <Minimize2 className="h-5 w-5" aria-hidden="true" />
+              </Button>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent className={maximized ? 'h-full flex flex-col items-center justify-center p-4' : 'space-y-4'}>
+          {error ? (
+            <Alert variant="destructive" role="alert">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
           ) : (
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={() => setMaximized(false)}
-              sx={{ borderRadius: 99, fontWeight: 700, px: 3, py: 1.5, boxShadow: 3, gap: 1, position: 'absolute', top: 16, right: 16 }}
-            >
-              Volver
-            </Button>
+            <>
+              <div className={maximized ? 'w-full h-[80vh] flex items-center justify-center' : 'w-full aspect-video bg-muted rounded-lg overflow-hidden'}>
+                <img
+                  ref={imgRef}
+                  alt={`Transmisión de video ${mode === 'processed' ? 'procesada' : 'original'} de la cámara ${cameraId}`}
+                  className={maximized ? 'max-w-full max-h-full object-contain' : 'w-full h-full object-cover'}
+                />
+              </div>
+
+              <div className={maximized ? 'absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-3' : 'flex gap-3 flex-wrap justify-center'}>
+                <Button
+                  onClick={toggleMode}
+                  variant={mode === 'processed' ? 'default' : 'secondary'}
+                  className="gap-2"
+                  aria-label={`Cambiar a video ${mode === 'processed' ? 'original' : 'procesado'}`}
+                >
+                  {mode === 'processed' ? (
+                    <>
+                      <Eye className="h-4 w-4" aria-hidden="true" />
+                      Ver original
+                    </>
+                  ) : (
+                    <>
+                      <Video className="h-4 w-4" aria-hidden="true" />
+                      Ver procesado
+                    </>
+                  )}
+                </Button>
+
+                {!maximized && (
+                  <Button
+                    onClick={toggleMaximize}
+                    variant="outline"
+                    className="gap-2"
+                    aria-label="Ver en pantalla completa"
+                  >
+                    <Maximize2 className="h-4 w-4" aria-hidden="true" />
+                    Maximizar
+                  </Button>
+                )}
+              </div>
+            </>
           )}
-        </Box>
-      </Paper>
-    </Box>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
