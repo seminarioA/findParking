@@ -78,7 +78,7 @@ services:
       - "8010"
 
   frontend_service:
-    image: aleseminario/aleseminario/findparking-frontend_service:latest
+    image: aleseminario/findparking-frontend_service:latest
     restart: unless-stopped
     expose:
       - "80"
