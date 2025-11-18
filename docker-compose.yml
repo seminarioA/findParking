@@ -87,6 +87,7 @@ services:
     image: nginx:latest
     volumes:
       - ./services/api_gateway/nginx.conf:/etc/nginx/nginx.conf:ro
+      - frontend_static:/var/cache/nginx:rw
     ports:
       - "80:80"
     depends_on:
@@ -105,3 +106,4 @@ services:
 volumes:
   redis_data:
   postgres_data:
+  frontend_static:
