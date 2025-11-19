@@ -1,0 +1,155 @@
+name: Docker Hub Images CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  # Imagen raíz base (se usa como prefijo para cada servicio)
+  REPO_ROOT_IMAGE: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/findparking
+  # Carpeta opcional con archivo para excluir rutas con Dockerfiles
+  BUILD_IGNORE_FILE: .dockerignore-build
+  # Habilitar cache (true/false)
+  ENABLE_CACHE: "true"
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          install: true
+
+      - name: Prepare list of Dockerfiles
+        id: prep
+        run: |
+          set -euo pipefail
+
+          echo "Descubriendo Dockerfiles..."
+          mapfile -t ALL < <(git ls-files | grep -E '^(.*/)?Dockerfile$' || true)
+
+          if [ ! -f "${BUILD_IGNORE_FILE}" ]; then
+            touch "${BUILD_IGNORE_FILE}"
+          fi
+
+            # Normaliza ignore (quita comentarios y líneas vacías)
+          mapfile -t IGNORE < <(grep -vE '^\s*#' "${BUILD_IGNORE_FILE}" | sed '/^[[:space:]]*$/d' || true)
+
+          FILTERED=()
+          for df in "${ALL[@]}"; do
+            skip="false"
+            for ig in "${IGNORE[@]}"; do
+              if [[ -n "$ig" && "$df" == "$ig"* ]]; then
+                skip="true"
+                break
+              fi
+            done
+            if [[ "$skip" == "false" ]]; then
+              FILTERED+=("$df")
+            else
+              echo "Ignorado por patrón: $df"
+            fi
+          done
+
+          if [ ${#FILTERED[@]} -eq 0 ]; then
+            echo "No se encontraron Dockerfiles para construir."
+            echo "dockerfiles_count=0" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          printf "%s\n" "${FILTERED[@]}" > dockerfiles.list
+          echo "Dockerfiles detectados:"
+          cat dockerfiles.list
+
+          echo "dockerfiles_count=${#FILTERED[@]}" >> "$GITHUB_OUTPUT"
+
+      - name: Build & Push (each Dockerfile)
+        if: steps.prep.outputs.dockerfiles_count != '0'
+        run: |
+          set -euo pipefail
+
+          SHORT_SHA="${GITHUB_SHA::7}"
+          ROOT_IMAGE="${REPO_ROOT_IMAGE}"
+
+          echo "Usando imagen raíz: ${ROOT_IMAGE}"
+          echo "SHA corto: ${SHORT_SHA}"
+
+          # Función utilitaria para construir y pushear
+          build_push () {
+            local dockerfile="$1"
+
+            local context_dir
+            context_dir="$(dirname "$dockerfile")"
+
+            local service_name
+            if [ "$context_dir" = "." ]; then
+              service_name="root"
+            else
+              service_name=$(echo "$context_dir" | tr '/_' '--')
+            fi
+
+            local image="${ROOT_IMAGE}-${service_name}"
+
+            echo "----------------------------------------"
+            echo "Servicio: ${service_name}"
+            echo "Dockerfile: ${dockerfile}"
+            echo "Contexto: ${context_dir}"
+            echo "Imagen destino: ${image}"
+            echo "Tags: latest, ${SHORT_SHA}"
+            echo "----------------------------------------"
+
+            # Flags de cache (opcional)
+            CACHE_FLAGS=()
+            if [ "${ENABLE_CACHE}" = "true" ]; then
+              CACHE_FLAGS+=(--cache-to "type=local,dest=.buildx-cache-${service_name},mode=max")
+              CACHE_FLAGS+=(--cache-from "type=local,src=.buildx-cache-${service_name}")
+            fi
+
+            docker buildx build \
+              --platform linux/amd64 \
+              -f "${dockerfile}" \
+              -t "${image}:latest" \
+              -t "${image}:${SHORT_SHA}" \
+              "${CACHE_FLAGS[@]}" \
+              --push \
+              "${context_dir}"
+
+            echo "Pushed: ${image}:latest y ${image}:${SHORT_SHA}"
+          }
+
+          while IFS= read -r df; do
+            build_push "$df"
+          done < dockerfiles.list
+
+      - name: Summary
+        run: |
+          if [ -f dockerfiles.list ]; then
+            echo "Se construyeron y publicaron las siguientes imágenes:"
+            while IFS= read -r df; do
+              ctx=$(dirname "$df")
+              if [ "$ctx" = "." ]; then
+                svc="root"
+              else
+                svc=$(echo "$ctx" | tr '/_' '--')
+              fi
+              echo "- ${REPO_ROOT_IMAGE}-${svc}:latest"
+            done < dockerfiles.list
+          else
+            echo "No se construyó ninguna imagen."
