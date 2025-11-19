@@ -16,7 +16,7 @@ services:
     restart: unless-stopped
 
   auth_service:
-    build: ./services/auth_service
+    image: aleseminario/findparking-services-auth-service:${IMAGE_TAG:-latest}
     environment:
       - DATABASE_URL=postgresql+asyncpg://auth_user:auth_password@postgres:5432/auth_db
       - SECRET_KEY=super-secret-key
@@ -30,7 +30,7 @@ services:
       - "8000"
 
   processing_service:
-    build: ./services/processing_service
+    image: aleseminario/findparking-services-processing-service:${IMAGE_TAG:-latest}
     environment:
       - REDIS_HOST=redis
     depends_on:
@@ -38,7 +38,7 @@ services:
     restart: unless-stopped
 
   video_service:
-    build: ./services/video_service
+    image: aleseminario/findparking-services-video-service:${IMAGE_TAG:-latest}
     environment:
       - REDIS_HOST=redis
     env_file:
@@ -51,7 +51,7 @@ services:
       - "8004"
 
   occupancy_service:
-    build: ./services/occupancy_service
+    image: aleseminario/findparking-services-occupancy-service:${IMAGE_TAG:-latest}
     environment:
       - REDIS_HOST=redis
     env_file:
@@ -64,7 +64,7 @@ services:
       - "8000"
 
   video_stream_service:
-    build: ./services/video_stream_service
+    image: aleseminario/findparking-services-video-stream-service:${IMAGE_TAG:-latest}
     environment:
       - VIDEO_PATHS={"entrada1":"resources/parking1.mp4"}
     volumes:
@@ -78,7 +78,7 @@ services:
       - "8010"
 
   frontend_service:
-    build: ./services/frontend_service
+    image: aleseminario/findparking-services-frontend-service:${IMAGE_TAG:-latest}
     restart: unless-stopped
     expose:
       - "80"
