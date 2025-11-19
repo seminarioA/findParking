@@ -25,6 +25,7 @@ export const endpoints = {
   // Auth
   login: () => `${API_BASE}/auth/login`,
   me: () => `${API_BASE}/auth/me`,
+  verify: () => `${API_BASE}/auth/verify`,
 
   // Occupancy
   occupancy: (cameraId: string) => `${API_BASE}/occupancy/${cameraId}`,

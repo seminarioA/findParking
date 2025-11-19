@@ -14,7 +14,7 @@ import { apiGet, endpoints } from '@/lib/api';
 import { useWebSocket } from '@/hooks/useWebSocket';
 
 export default function Home() {
-  const { user, token } = useAuth();
+  const { user, token, logout } = useAuth();
   const { speak, isSupported: isSpeechSupported, isSpeaking } = useSpeechSynthesis();
   const [occupancyData, setOccupancyData] = useState<OccupancyData | null>(null);
   const [cameraId] = useState<string>('entrada1');
@@ -46,9 +46,14 @@ export default function Home() {
           { token }
         );
         if (!cancelled) setOccupancyData(computeFromPayload(data));
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error('Error cargando ocupación:', e);
+      } catch (e: any) {
+        // Si el token es inválido, cerramos sesión para forzar re-login
+        if (typeof e?.message === 'string' && e.message.startsWith('HTTP 401')) {
+          logout();
+        } else {
+          // eslint-disable-next-line no-console
+          console.error('Error cargando ocupación:', e);
+        }
       }
     })();
     return () => {

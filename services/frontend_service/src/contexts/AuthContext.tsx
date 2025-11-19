@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { endpoints } from '@/lib/api';
 import type { User } from '@/types/auth';
 
 interface AuthContextType {
@@ -18,21 +19,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('findparking_token');
-    const storedUser = localStorage.getItem('findparking_user');
-    
-    if (storedToken && storedUser) {
-      try {
-        setToken(storedToken);
-        setUser(JSON.parse(storedUser));
-      } catch (error) {
-        console.error('Error parsing stored user data:', error);
-        localStorage.removeItem('findparking_token');
-        localStorage.removeItem('findparking_user');
+    const checkStoredSession = async () => {
+      const storedToken = localStorage.getItem('findparking_token');
+      const storedUser = localStorage.getItem('findparking_user');
+
+      if (storedToken && storedUser) {
+        try {
+          // Verificar token al iniciar
+          const res = await fetch(endpoints.verify(), {
+            headers: { Authorization: `Bearer ${storedToken}` },
+          });
+          if (!res.ok) throw new Error('invalid');
+          setToken(storedToken);
+          setUser(JSON.parse(storedUser));
+        } catch (error) {
+          localStorage.removeItem('findparking_token');
+          localStorage.removeItem('findparking_user');
+          setToken(null);
+          setUser(null);
+        }
       }
-    }
-    
-    setIsLoading(false);
+
+      setIsLoading(false);
+    };
+
+    checkStoredSession();
   }, []);
 
   const login = (newToken: string, newUser: User) => {
