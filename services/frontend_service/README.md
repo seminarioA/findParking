@@ -1,122 +1,73 @@
-# FindParking - Sistema de Monitoreo Inteligente de Estacionamiento
+# Welcome to your Lovable project
 
-Sistema de monitoreo en tiempo real de espacios de estacionamiento desarrollado para la Universidad Tecnológica del Perú (UTP).
+## Project info
 
-## ✨ Características Principales
+**URL**: https://lovable.dev/projects/35cc67db-97ad-4a84-8036-ddfb60349fe8
 
-- 🔐 **Autenticación segura** con validación robusta (Zod + React Hook Form)
-- 📊 **Monitoreo en tiempo real** vía WebSockets con reconexión automática
-- 🎥 **Streaming de video** procesado y original en tiempo real
-- 🔊 **Síntesis de voz** para accesibilidad (WCAG 2.1 AA)
-- 🌓 **Modo oscuro/claro** con preferencia persistente
-- 📱 **Diseño 100% responsive** (móvil, tablet, escritorio)
-- 🔒 **Control de roles** (admin, gestor, usuario)
-- ♿ **Accesibilidad completa** con ARIA labels y navegación por teclado
+## How can I edit this code?
 
-## 🛠️ Stack Tecnológico
+There are several ways of editing your application.
 
-- **Frontend**: React 18 + TypeScript + Vite
-- **UI**: Tailwind CSS + shadcn/ui
-- **Validación**: Zod
-- **Formularios**: React Hook Form
-- **Comunicación**: WebSockets + REST API
-- **Estándares**: WCAG 2.1 AA, ISO 9241 (ergonomía)
+**Use Lovable**
 
-## 📦 Estructura del Proyecto
+Simply visit the [Lovable Project](https://lovable.dev/projects/35cc67db-97ad-4a84-8036-ddfb60349fe8) and start prompting.
 
-```
-src/
-├── components/          # Componentes UI reutilizables
-│   ├── Login.tsx       # Autenticación
-│   ├── Register.tsx    # Registro de usuarios
-│   ├── Navbar.tsx      # Navegación principal
-│   ├── Occupancy.tsx   # Dashboard de ocupación
-│   ├── VideoStream.tsx # Transmisión de video
-│   └── Footer.tsx      # Pie de página
-├── hooks/              # Custom React hooks
-│   ├── useWebSocket.ts # Gestión de WebSockets
-│   └── useSpeechSynthesis.ts # Síntesis de voz
-├── lib/                
-│   ├── api/           # Cliente API REST
-│   └── validation.ts  # Esquemas Zod
-├── pages/             
-│   ├── Index.tsx      # Punto de entrada
-│   └── Dashboard.tsx  # Dashboard principal
-├── types/             # Tipos TypeScript
-└── utils/             # Utilidades
+Changes made via Lovable will be committed automatically to this repo.
 
-```
+**Use your preferred IDE**
 
-## 🚀 Instalación y Desarrollo
+If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+
+The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+
+Follow these steps:
 
 ```sh
-# Clonar el repositorio
+# Step 1: Clone the repository using the project's Git URL.
 git clone <YOUR_GIT_URL>
 
-# Navegar al directorio
+# Step 2: Navigate to the project directory.
 cd <YOUR_PROJECT_NAME>
 
-# Instalar dependencias
-npm install
+# Step 3: Install the necessary dependencies.
+npm i
 
-# Iniciar servidor de desarrollo
+# Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
 
-## 🔑 Roles de Usuario
+**Edit a file directly in GitHub**
 
-- **Usuario**: Visualización de ocupación de espacios
-- **Gestor**: Usuario + acceso a streaming de video
-- **Admin**: Todos los permisos
+- Navigate to the desired file(s).
+- Click the "Edit" button (pencil icon) at the top right of the file view.
+- Make your changes and commit the changes.
 
-## ♿ Accesibilidad (WCAG 2.1 AA)
+**Use GitHub Codespaces**
 
-- ✅ Navegación completa por teclado
-- ✅ ARIA labels y roles semánticos
-- ✅ Contraste de colores AAA
-- ✅ Síntesis de voz para datos críticos
-- ✅ Textos alternativos descriptivos
-- ✅ Estados de carga accesibles
-- ✅ Mensajes de error claros
+- Navigate to the main page of your repository.
+- Click on the "Code" button (green button) near the top right.
+- Select the "Codespaces" tab.
+- Click on "New codespace" to launch a new Codespace environment.
+- Edit files directly within the Codespace and commit and push your changes once you're done.
 
-## 🔒 Seguridad
+## What technologies are used for this project?
 
-- Validación de inputs (cliente + servidor)
-- Sanitización de datos
-- Tokens JWT con expiración
-- WebSockets autenticados
-- Sin datos sensibles en localStorage
-- HTTPS obligatorio en producción
+This project is built with:
 
-## 📱 Compatibilidad
+- Vite
+- TypeScript
+- React
+- shadcn-ui
+- Tailwind CSS
 
-**Navegadores**: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
-**Dispositivos**: Desktop, Laptop, Tablet, Móvil (375px+)
+## How can I deploy this project?
 
-## 📊 Mejoras de Producción Implementadas
+Simply open [Lovable](https://lovable.dev/projects/35cc67db-97ad-4a84-8036-ddfb60349fe8) and click on Share -> Publish.
 
-✅ Migración completa de Material-UI a Tailwind CSS + shadcn/ui
-✅ TypeScript con tipos estrictos (sin `any`)
-✅ Validación robusta con Zod
-✅ WebSockets con reconexión automática
-✅ Manejo de errores profesional
-✅ Accesibilidad WCAG 2.1 AA completa
-✅ SEO optimizado (meta tags, títulos, descripciones)
-✅ Diseño responsive real
-✅ Design tokens consistentes
-✅ Componentes modulares reutilizables
-✅ Hooks personalizados para lógica compleja
-✅ Código limpio y mantenible
+## Can I connect a custom domain to my Lovable project?
 
-## 🎯 Estándares Cumplidos
+Yes, you can!
 
-- **ISO 9241-110**: Principios de diálogo (ergonomía)
-- **ISO 9241-171**: Accesibilidad software
-- **WCAG 2.1 AA**: Accesibilidad web
-- **ES6+**: JavaScript moderno
-- **TypeScript strict mode**: Seguridad de tipos
-- **Semantic HTML**: Estructura semántica
+To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
-## 📄 Proyecto Lovable
-
-**URL**: https://lovable.dev/projects/9b833147-1790-4681-bff0-5432431658d4
+Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
