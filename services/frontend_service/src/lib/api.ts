@@ -1,8 +1,5 @@
-// Centralized API + WS URL builders and simple client helpers
-
 function getApiBase() {
   try {
-    // Avoid TS type issues if vite types aren't loaded
     const env = (import.meta as any)?.env;
     return env?.VITE_API_BASE_URL || "/api";
   } catch {

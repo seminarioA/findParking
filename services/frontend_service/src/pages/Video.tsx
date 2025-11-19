@@ -14,6 +14,7 @@ export default function Video() {
   const [frameUrl, setFrameUrl] = useState<string | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const lastUrlRef = useRef<string | null>(null);
+  const pendingRevokeRef = useRef<string | null>(null);
 
   const wsUrl = useMemo(() => {
     if (!cameraId) return null;
@@ -47,7 +48,12 @@ export default function Video() {
           return;
         }
         const url = URL.createObjectURL(blob);
-        if (lastUrlRef.current) URL.revokeObjectURL(lastUrlRef.current);
+        // Defer revoking the previous URL until the next <img> load
+        if (pendingRevokeRef.current) {
+          try { URL.revokeObjectURL(pendingRevokeRef.current); } catch {}
+          pendingRevokeRef.current = null;
+        }
+        pendingRevokeRef.current = lastUrlRef.current;
         lastUrlRef.current = url;
         setFrameUrl(url);
       } catch (e) {
@@ -69,6 +75,10 @@ export default function Video() {
       if (lastUrlRef.current) {
         URL.revokeObjectURL(lastUrlRef.current);
         lastUrlRef.current = null;
+      }
+      if (pendingRevokeRef.current) {
+        URL.revokeObjectURL(pendingRevokeRef.current);
+        pendingRevokeRef.current = null;
       }
     };
   }, [token, wsUrl]);
@@ -100,7 +110,24 @@ export default function Video() {
         <div className="rounded-lg border bg-card overflow-hidden aspect-video flex items-center justify-center">
           {frameUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={frameUrl} alt="Frame" className="w-full h-full object-contain" />
+            <img
+              src={frameUrl}
+              alt="Frame"
+              className="w-full h-full object-contain"
+              onLoad={() => {
+                if (pendingRevokeRef.current) {
+                  try { URL.revokeObjectURL(pendingRevokeRef.current); } catch {}
+                  pendingRevokeRef.current = null;
+                }
+              }}
+              onError={() => {
+                // Skip bad frames and keep streaming; do not block
+                // Optionally revoke current to avoid leaks
+                if (frameUrl) {
+                  try { URL.revokeObjectURL(frameUrl); } catch {}
+                }
+              }}
+            />
           ) : (
             <p className="text-muted-foreground">
               {error ? error : isConnected ? 'Esperando frames…' : 'Conectando…'}
