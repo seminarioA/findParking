@@ -11,6 +11,7 @@ import Settings from "./pages/Settings";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
+import Video from "./pages/Video";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Settings />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/video"
+              element={
+                <ProtectedRoute>
+                  <Video />
                 </ProtectedRoute>
               }
             />

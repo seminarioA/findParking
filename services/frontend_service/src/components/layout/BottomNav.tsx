@@ -1,10 +1,11 @@
-import { Home, Settings, User } from 'lucide-react';
+import { Home, Settings, User, Video as VideoIcon } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { cn } from '@/lib/utils';
 
 export default function BottomNav() {
   const navItems = [
     { to: '/', icon: Home, label: 'Inicio' },
+    { to: '/video', icon: VideoIcon, label: 'Video' },
     { to: '/settings', icon: Settings, label: 'Configuración' },
     { to: '/profile', icon: User, label: 'Perfil' },
   ];
