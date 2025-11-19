@@ -1,0 +1,22 @@
+services:
+  # ----------------------------------------------------------------------
+  # FRONTEND LOCAL (Reemplaza la imagen del registry con build local)
+  # ----------------------------------------------------------------------
+  frontend_service:
+    build:
+      context: ./services/frontend_service
+      dockerfile: Dockerfile
+    volumes:
+      - ./services/frontend_service:/app         # Para hot reload si aplica
+    expose:
+      - "80"
+    restart: unless-stopped
+
+  # ----------------------------------------------------------------------
+  # API Gateway también sirve archivos estáticos del frontend
+  # Así que montamos la carpeta build local (si tu frontend genera /dist o /build)
+  # ----------------------------------------------------------------------
+  api_gateway:
+    volumes:
+      - ./services/api_gateway/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./services/frontend_service/dist:/var/cache/nginx:rw
