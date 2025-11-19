@@ -1,6 +1,5 @@
-opencv-python-headless
-ultralytics
-redis
-numpy
-pandas
-torch
+redis==7.0.1
+numpy==2.2.6
+opencv-python-headless==4.12.0.88
+pillow==12.0.0
+pyyaml==6.0.3

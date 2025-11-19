@@ -16,8 +16,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Copiamos primero requirements para aprovechar caching de capas
 COPY requirements.txt .
 
-# Instalamos dependencias Python (sin cache pip y sin compilar .pyc para reducir tamaño)
+# Instalamos dependencias Python en tres pasos:
+# 1) PyTorch CPU y torchvision desde el índice CPU oficial (evita CUDA y reduce ~2-3GB)
+# 2) Ultralytics sin dependencias (instalaremos sólo las mínimas necesarias)
+# 3) Resto de dependencias mínimas desde requirements.txt
 RUN pip install --upgrade pip && \
+    pip install --no-cache-dir --index-url https://download.pytorch.org/whl/cpu torch==2.9.1 torchvision==0.24.1 && \
+    pip install --no-cache-dir --no-deps ultralytics==8.3.229 && \
     pip install --no-cache-dir --prefer-binary --no-compile --timeout=120 --retries=10 -r requirements.txt
 
 # Copiamos solo los directorios necesarios (evita arrastrar __pycache__ si usamos .dockerignore)
