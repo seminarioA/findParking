@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 export function useSpeechSynthesis() {
   const [isSupported, setIsSupported] = useState(false);
@@ -21,10 +21,7 @@ export function useSpeechSynthesis() {
 
   const speak = useCallback(
     (text: string, options?: { lang?: string; rate?: number; pitch?: number }) => {
-      if (!isSupported) {
-        console.warn('Speech synthesis not supported');
-        return;
-      }
+      if (!isSupported || !text) return;
 
       window.speechSynthesis.cancel();
 
@@ -34,9 +31,8 @@ export function useSpeechSynthesis() {
       utterance.pitch = options?.pitch || 1;
 
       const spanishVoice = voices.find(
-        (voice) => voice.lang.startsWith('es') && voice.name.toLowerCase().includes('female')
-      ) || voices.find((voice) => voice.lang.startsWith('es'));
-
+        (voice) => voice.lang.startsWith('es') || voice.lang.includes('ES')
+      );
       if (spanishVoice) {
         utterance.voice = spanishVoice;
       }
@@ -57,5 +53,11 @@ export function useSpeechSynthesis() {
     }
   }, [isSupported]);
 
-  return { speak, cancel, isSupported, isSpeaking };
+  return {
+    isSupported,
+    isSpeaking,
+    speak,
+    cancel,
+    voices,
+  };
 }

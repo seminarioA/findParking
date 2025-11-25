@@ -2,19 +2,25 @@ export interface OccupancySummary {
   occupied: number;
   free: number;
   total: number;
+  percentage: number;
 }
 
-export interface OccupancyAreas {
-  [areaName: string]: boolean;
+export interface ParkingSpot {
+  id: string;
+  status: 'free' | 'occupied';
+  type: 'regular' | 'electric' | 'disabled' | 'motorcycle';
 }
 
 export interface OccupancyData {
   summary: OccupancySummary;
-  areas: OccupancyAreas;
-  timestamp: string;
+  spots: ParkingSpot[];
+  lastUpdated: string;
+  cameraId: string;
 }
 
-export interface OccupancyError {
+export interface Alert {
+  id: string;
+  type: 'info' | 'warning' | 'error';
   message: string;
-  code?: string;
+  date: string;
 }
