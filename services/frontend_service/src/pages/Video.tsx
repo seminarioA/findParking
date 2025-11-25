@@ -87,21 +87,35 @@ export default function Video() {
     <div className="min-h-screen bg-background pb-24">
       <Header title="Video" subtitle="Stream de cámara" />
       <main className="p-4 space-y-4">
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-muted-foreground" htmlFor="camera">Cámara:</label>
-          <select
-            id="camera"
-            className="border rounded px-2 py-1 bg-background"
-            value={cameraId}
-            onChange={(e) => setCameraId(e.target.value)}
-          >
-            <option value="entrada1">Entrada 1</option>
-          </select>
-          <div className="ml-auto flex gap-2">
-            <Button variant={mode === 'processed' ? 'default' : 'secondary'} onClick={() => setMode('processed')}>
+        <div className="flex flex-wrap items-center gap-4 justify-between">
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-muted-foreground" htmlFor="camera">Cámara:</label>
+            <select
+              id="camera"
+              className="border rounded px-2 py-1 bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+              value={cameraId}
+              onChange={(e) => setCameraId(e.target.value)}
+            >
+              <option value="entrada1">Entrada 1</option>
+            </select>
+          </div>
+          <div className="inline-flex rounded-md overflow-hidden border bg-muted/40">
+            <Button
+              variant={mode === 'processed' ? 'default' : 'ghost'}
+              size="sm"
+              className={`rounded-none px-4 ${mode === 'processed' ? '' : 'text-muted-foreground hover:bg-muted'} transition-colors`}
+              aria-pressed={mode === 'processed'}
+              onClick={() => setMode('processed')}
+            >
               Procesado
             </Button>
-            <Button variant={mode === 'raw' ? 'default' : 'secondary'} onClick={() => setMode('raw')}>
+            <Button
+              variant={mode === 'raw' ? 'default' : 'ghost'}
+              size="sm"
+              className={`rounded-none px-4 border-l ${mode === 'raw' ? '' : 'text-muted-foreground hover:bg-muted'} transition-colors`}
+              aria-pressed={mode === 'raw'}
+              onClick={() => setMode('raw')}
+            >
               Crudo
             </Button>
           </div>
