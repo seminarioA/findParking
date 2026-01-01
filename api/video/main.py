@@ -79,11 +79,11 @@ async def _producer_loop(stream_key: str, redis_key: str) -> None:
             except asyncio.CancelledError:
                 raise
             except Exception:
-                logger.exception("Error leyendo frame de Redis para %s", redis_key)
+                logger.exception("Error reading frame from Redis for %s", redis_key)
 
             await asyncio.sleep(POLL_INTERVAL)
     except asyncio.CancelledError:
-        logger.info("Productor cancelado para %s", stream_key)
+        logger.info("Producer cancelled for %s", stream_key)
         raise
     finally:
         async with state_lock:

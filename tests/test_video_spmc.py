@@ -20,7 +20,7 @@ class DummyRedis:
 
 
 async def _run_spmc_flow(monkeypatch):
-    # Asegurar estado limpio
+    # Ensure clean state
     for task in list(video_main.producer_tasks.values()):
         task.cancel()
         with suppress(asyncio.CancelledError):
@@ -52,7 +52,7 @@ async def _run_spmc_flow(monkeypatch):
 
     assert stream_key1 not in video_main.producer_tasks
 
-    # Restaurar y limpiar
+    # Restore and cleanup
     video_main.POLL_INTERVAL = original_interval
     for task in list(video_main.producer_tasks.values()):
         task.cancel()
