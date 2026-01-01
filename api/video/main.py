@@ -33,7 +33,7 @@ redis_client = redis.Redis(
 JWT_SECRET = os.getenv("JWT_SECRET", "CHANGE_ME")
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 
-POLL_INTERVAL = 0.03
+POLL_INTERVAL = float(os.getenv("VIDEO_POLL_INTERVAL", "0.03"))
 stream_consumers: dict[str, set[asyncio.Queue[bytes]]] = {}
 producer_tasks: dict[str, asyncio.Task] = {}
 state_lock = asyncio.Lock()
@@ -109,7 +109,7 @@ async def _unregister_consumer(stream_key: str, queue: asyncio.Queue[bytes]) -> 
         consumers = stream_consumers.get(stream_key)
         if consumers and queue in consumers:
             consumers.remove(queue)
-        if consumers is not None and len(consumers) == 0:
+        if consumers is not None and not consumers:
             stream_consumers.pop(stream_key, None)
 
 async def handle_video_stream(websocket: WebSocket, camera_id: str, key_suffix: str, allowed_roles: set[str]):
