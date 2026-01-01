@@ -64,9 +64,9 @@ async def _producer_loop(stream_key: str, redis_key: str) -> None:
         while True:
             async with state_lock:
                 targets = list(stream_consumers.get(stream_key, ()))
-
-            if not targets:
-                break
+                if not targets:
+                    producer_tasks.pop(stream_key, None)
+                    break
 
             try:
                 frame = await asyncio.to_thread(redis_client.get, redis_key)
@@ -109,7 +109,7 @@ async def _unregister_consumer(stream_key: str, queue: asyncio.Queue[bytes]) -> 
         consumers = stream_consumers.get(stream_key)
         if consumers and queue in consumers:
             consumers.remove(queue)
-        if consumers is not None and not consumers:
+        if not consumers:
             stream_consumers.pop(stream_key, None)
 
 async def handle_video_stream(websocket: WebSocket, camera_id: str, key_suffix: str, allowed_roles: set[str]):
@@ -126,7 +126,7 @@ async def handle_video_stream(websocket: WebSocket, camera_id: str, key_suffix: 
         return
 
     await websocket.accept(subprotocol=token)
-    logger.info(f"WS aceptado: {camera_id} ({key_suffix}) - rol={role}")
+    logger.info(f"WS accepted: {camera_id} ({key_suffix}) - rol={role}")
 
     stream_key, queue = await _register_consumer(camera_id, key_suffix)
     try:
