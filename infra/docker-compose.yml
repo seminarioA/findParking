@@ -21,7 +21,7 @@ services:
       - DATABASE_URL=postgresql+asyncpg://auth_user:auth_password@postgres:5432/auth_db
       - SECRET_KEY=super-secret-key
     env_file:
-      - ./services/auth_service/.env
+      - ../api/auth/.env
     depends_on:
       - redis
       - postgres
@@ -42,7 +42,7 @@ services:
     environment:
       - REDIS_HOST=redis
     env_file:
-      - ./services/video_service/.env
+      - ../api/video/.env
     depends_on:
       - redis
       - auth_service
@@ -55,7 +55,7 @@ services:
     environment:
       - REDIS_HOST=redis
     env_file:
-      - ./services/occupancy_service/.env
+      - ../api/occupancy/.env
     depends_on:
       - redis
       - auth_service
@@ -68,7 +68,7 @@ services:
     environment:
       - VIDEO_PATHS={"entrada1":"resources/parking1.mp4"}
     volumes:
-      - ./resources:/app/resources
+      - ../core/resources:/app/resources
     depends_on:
       - video_service
       - occupancy_service
@@ -86,7 +86,7 @@ services:
   api_gateway:
     image: nginx:latest
     volumes:
-      - ./services/api_gateway/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./api_gateway/nginx.conf:/etc/nginx/nginx.conf:ro
       - frontend_static:/var/cache/nginx:rw
     ports:
       - "80:80"
