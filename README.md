@@ -30,6 +30,20 @@ FindParking es una plataforma que permite determinar la ocupación de plazas de 
 ## 👩🏻‍💻 Acerca de
 Tecnicamente, FindParking captura frames de cámaras configuradas, ejecuta detección de vehículos con YOLO + OpenCV, mapea detecciones a plazas definidas y expone la ocupación actual mediante REST y WebSockets.
 
+### 🧩 Monolito modular
+La base de código se reorganizó como un monolito modular para agrupar responsabilidades:
+```
+findParking/
+├── infra/        # Docker Compose, gateway y despliegue
+├── api/          # Módulos de autenticación, ocupación y video
+├── vision/       # Procesamiento de video y streaming
+├── core/         # Recursos compartidos (modelos, videos, configuraciones)
+├── metrics/      # Punto de entrada para observabilidad/monitorización
+├── ui/           # Frontend React
+├── docs/         # Documentación UML y diagramas
+└── tests/        # Pruebas de contrato e integración ligera
+```
+
 ## 👩🏻‍🔬 Instalación
 
 ¡Existen dos maneras!
@@ -50,19 +64,20 @@ git clone https://github.com/seminarioA/findParking.git
 #### Abrir Carpeta
 ```bash
 cd findParking
+cd infra
 ```
 
 #### Levantar microservicios
 
 ```bash
-docker-compose up --build
+docker-compose -f docker-compose.yml up --build
 ```
 
 ### Instalación automatica (Linux/WSL)
 
 #### Ejecutar el script
 ```bash
-./deploy.sh
+./infra/deploy.sh
 ```
 
 ### ¿Y como accedo al servicio?

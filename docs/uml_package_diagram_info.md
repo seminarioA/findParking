@@ -2,7 +2,7 @@
 
 Este documento complementa la guía de clases aportando una vista de paquetes para cada microservicio de **findParking**. Cada sección lista los paquetes relevantes, sus componentes y dependencias, seguida de un bloque PlantUML independiente (marcado con `@startuml` y `@enduml`) listo para generar el diagrama correspondiente.
 
-## Auth Service (`services/auth_service/app`)
+## Auth Service (`api/auth/app`)
 
 | Paquete | Elementos principales | Responsabilidad | Dependencias clave |
 | --- | --- | --- | --- |
@@ -53,7 +53,7 @@ setup --|> data
 @enduml
 ```
 
-## Processing Service (`services/processing_service`)
+## Processing Service (`vision/processing`)
 
 | Paquete | Elementos principales | Responsabilidad | Dependencias clave |
 | --- | --- | --- | --- |
@@ -112,7 +112,7 @@ package "Processing Service" {
 @enduml
 ```
 
-## Video Stream Service (`services/video_stream_service`)
+## Video Stream Service (`vision/video_stream`)
 
 | Paquete | Elementos principales | Responsabilidad | Dependencias clave |
 | --- | --- | --- | --- |
@@ -149,7 +149,7 @@ package "Video Stream Service" {
 @enduml
 ```
 
-## Occupancy Service (`services/occupancy_service`)
+## Occupancy Service (`api/occupancy`)
 
 | Paquete | Elementos principales | Responsabilidad | Dependencias clave |
 | --- | --- | --- | --- |
@@ -180,7 +180,7 @@ package "Occupancy Service" {
 @enduml
 ```
 
-## Front-End Service (`services/frontend_service/src`)
+## Front-End Service (`ui/frontend/src`)
 
 | Paquete | Elementos principales | Responsabilidad | Dependencias clave |
 | --- | --- | --- | --- |
@@ -247,4 +247,3 @@ package "Front-End Service" {
 1. **Mantener coherencia con los diagramas de clases:** alinear los paquetes con las clases clave presentadas en `uml_class_diagram_info.md` para preservar el contexto.
 2. **Mostrar dependencias inter-servicio:** complementar cada diagrama con notas o conectores hacia paquetes externos cuando se construya un diagrama de nivel global.
 3. **Resaltar componentes reutilizables:** los paquetes `utils`, `security` y `api` concentran la lógica compartida; enfatizarlos ayuda a identificar puntos de extensión.
-
