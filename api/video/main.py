@@ -1,8 +1,9 @@
 import os
 import jwt
 import logging
-import redis
 import asyncio
+import redis.asyncio as redis
+from contextlib import suppress
 from datetime import datetime
 from fastapi import FastAPI, WebSocket
 from starlette.websockets import WebSocketDisconnect
@@ -32,6 +33,11 @@ redis_client = redis.Redis(
 JWT_SECRET = os.getenv("JWT_SECRET", "CHANGE_ME")
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 
+POLL_INTERVAL = float(os.getenv("VIDEO_POLL_INTERVAL", "0.03"))
+stream_consumers: dict[str, set[asyncio.Queue[bytes]]] = {}
+producer_tasks: dict[str, asyncio.Task] = {}
+state_lock = asyncio.Lock()
+
 def verify_jwt_and_get_role(token: str) -> str | None:
     try:
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
@@ -50,6 +56,65 @@ def verify_jwt_and_get_role(token: str) -> str | None:
 
 app = FastAPI()
 
+def _stream_key(camera_id: str, key_suffix: str) -> str:
+    return f"{camera_id}:{key_suffix}"
+
+async def _producer_loop(stream_key: str, redis_key: str) -> None:
+    try:
+        while True:
+            async with state_lock:
+                targets = stream_consumers.get(stream_key)
+                if not targets:
+                    producer_tasks.pop(stream_key, None)
+                    break
+                target_snapshot = tuple(targets)
+
+            try:
+                frame = await redis_client.get(redis_key)
+                if frame:
+                    for queue in target_snapshot:
+                        try:
+                            queue.put_nowait(frame)
+                        except asyncio.QueueFull:
+                            logger.debug("Dropping stale frame for %s", stream_key)
+                            with suppress(asyncio.QueueEmpty):
+                                queue.get_nowait()
+                            queue.put_nowait(frame)
+            except asyncio.CancelledError:
+                raise
+            except Exception:
+                logger.exception("Error reading frame from Redis for %s", redis_key)
+
+            await asyncio.sleep(POLL_INTERVAL)
+    except asyncio.CancelledError:
+        logger.info("Producer cancelled for %s", stream_key)
+        raise
+    finally:
+        async with state_lock:
+            producer_tasks.pop(stream_key, None)
+
+async def _register_consumer(camera_id: str, key_suffix: str) -> tuple[str, asyncio.Queue[bytes]]:
+    stream_key = _stream_key(camera_id, key_suffix)
+    queue: asyncio.Queue[bytes] = asyncio.Queue(maxsize=1)
+    async with state_lock:
+        consumers = stream_consumers.setdefault(stream_key, set())
+        consumers.add(queue)
+        if stream_key not in producer_tasks:
+            producer_tasks[stream_key] = asyncio.create_task(
+                _producer_loop(stream_key, f"frame_{camera_id}_{key_suffix}")
+            )
+    return stream_key, queue
+
+async def _unregister_consumer(stream_key: str, queue: asyncio.Queue[bytes]) -> None:
+    async with state_lock:
+        consumers = stream_consumers.get(stream_key)
+        if consumers is None:
+            return
+
+        consumers.discard(queue)
+        if not consumers:
+            stream_consumers.pop(stream_key, None)
+
 async def handle_video_stream(websocket: WebSocket, camera_id: str, key_suffix: str, allowed_roles: set[str]):
     token = websocket.headers.get("sec-websocket-protocol")
     if not token:
@@ -64,18 +129,20 @@ async def handle_video_stream(websocket: WebSocket, camera_id: str, key_suffix: 
         return
 
     await websocket.accept(subprotocol=token)
-    logger.info(f"WS aceptado: {camera_id} ({key_suffix}) - rol={role}")
+    logger.info(f"WS accepted: {camera_id} ({key_suffix}) - rol={role}")
 
+    stream_key, queue = await _register_consumer(camera_id, key_suffix)
     try:
         while True:
-            frame = redis_client.get(f"frame_{camera_id}_{key_suffix}")
+            frame = await queue.get()
             if frame:
                 await websocket.send_bytes(frame)
-            await asyncio.sleep(0.03)
     except WebSocketDisconnect:
         logger.info(f"WS desconectado: {camera_id}/{key_suffix}")
     except Exception as e:
         logger.exception(f"Error WS: {str(e)}")
+    finally:
+        await _unregister_consumer(stream_key, queue)
 
 @app.websocket("/api/video/{camera_id}/processed")
 async def ws_processed(camera_id: str, websocket: WebSocket):
