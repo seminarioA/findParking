@@ -1,11 +1,5 @@
 import asyncio
-import pathlib
-import sys
 from contextlib import suppress
-
-ROOT_DIR = pathlib.Path(__file__).resolve().parents[1]
-if str(ROOT_DIR) not in sys.path:
-    sys.path.append(str(ROOT_DIR))
 
 from api.video import main as video_main
 
@@ -14,7 +8,7 @@ class DummyRedis:
     def __init__(self):
         self.counter = 0
 
-    def get(self, key: str):
+    async def get(self, key: str):
         self.counter += 1
         return f"frame-{self.counter}".encode()
 

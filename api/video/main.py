@@ -1,6 +1,5 @@
 import os
 import jwt
-import inspect
 import logging
 import asyncio
 import redis.asyncio as redis
@@ -71,9 +70,7 @@ async def _producer_loop(stream_key: str, redis_key: str) -> None:
                 target_snapshot = tuple(targets)
 
             try:
-                frame = redis_client.get(redis_key)
-                if inspect.isawaitable(frame):
-                    frame = await frame
+                frame = await redis_client.get(redis_key)
                 if frame:
                     for queue in target_snapshot:
                         try:
@@ -111,8 +108,7 @@ async def _register_consumer(camera_id: str, key_suffix: str) -> tuple[str, asyn
 async def _unregister_consumer(stream_key: str, queue: asyncio.Queue[bytes]) -> None:
     async with state_lock:
         consumers = stream_consumers.get(stream_key)
-        if not consumers:
-            stream_consumers.pop(stream_key, None)
+        if consumers is None:
             return
 
         consumers.discard(queue)
