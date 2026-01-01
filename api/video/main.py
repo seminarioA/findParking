@@ -1,8 +1,9 @@
 import os
 import jwt
+import inspect
 import logging
-import redis
 import asyncio
+import redis.asyncio as redis
 from contextlib import suppress
 from datetime import datetime
 from fastapi import FastAPI, WebSocket
@@ -63,15 +64,18 @@ async def _producer_loop(stream_key: str, redis_key: str) -> None:
     try:
         while True:
             async with state_lock:
-                targets = list(stream_consumers.get(stream_key, ()))
+                targets = stream_consumers.get(stream_key)
                 if not targets:
                     producer_tasks.pop(stream_key, None)
                     break
+                target_snapshot = tuple(targets)
 
             try:
-                frame = await asyncio.to_thread(redis_client.get, redis_key)
+                frame = redis_client.get(redis_key)
+                if inspect.isawaitable(frame):
+                    frame = await frame
                 if frame:
-                    for queue in targets:
+                    for queue in target_snapshot:
                         try:
                             queue.put_nowait(frame)
                         except asyncio.QueueFull:
@@ -107,8 +111,11 @@ async def _register_consumer(camera_id: str, key_suffix: str) -> tuple[str, asyn
 async def _unregister_consumer(stream_key: str, queue: asyncio.Queue[bytes]) -> None:
     async with state_lock:
         consumers = stream_consumers.get(stream_key)
-        if consumers and queue in consumers:
-            consumers.remove(queue)
+        if not consumers:
+            stream_consumers.pop(stream_key, None)
+            return
+
+        consumers.discard(queue)
         if not consumers:
             stream_consumers.pop(stream_key, None)
 

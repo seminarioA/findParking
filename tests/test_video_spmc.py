@@ -45,12 +45,7 @@ async def _run_spmc_flow(monkeypatch):
     await video_main._unregister_consumer(stream_key1, queue1)
     await video_main._unregister_consumer(stream_key2, queue2)
 
-    for _ in range(10):
-        if stream_key1 not in video_main.producer_tasks:
-            break
-        await asyncio.sleep(0.01)
-
-    assert stream_key1 not in video_main.producer_tasks
+    await asyncio.wait_for(_wait_for_cleanup(stream_key1), timeout=0.5)
 
     # Restore and cleanup
     video_main.POLL_INTERVAL = original_interval
@@ -60,6 +55,11 @@ async def _run_spmc_flow(monkeypatch):
             await task
     video_main.stream_consumers.clear()
     video_main.producer_tasks.clear()
+
+
+async def _wait_for_cleanup(stream_key: str):
+    while stream_key in video_main.producer_tasks:
+        await asyncio.sleep(0.01)
 
 
 def test_single_producer_multiple_consumers(monkeypatch):
