@@ -72,10 +72,12 @@ async def _producer_loop(stream_key: str, redis_key: str) -> None:
                 frame = redis_client.get(redis_key)
                 if frame:
                     for queue in targets:
-                        if queue.full():
+                        try:
+                            queue.put_nowait(frame)
+                        except asyncio.QueueFull:
                             with suppress(asyncio.QueueEmpty):
                                 queue.get_nowait()
-                        await queue.put(frame)
+                            queue.put_nowait(frame)
             except asyncio.CancelledError:
                 raise
             except Exception:
