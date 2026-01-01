@@ -30,7 +30,7 @@ async def _run_spmc_flow(monkeypatch):
 
     monkeypatch.setattr(video_main, "redis_client", DummyRedis())
     original_interval = video_main.POLL_INTERVAL
-    video_main.POLL_INTERVAL = 0.0
+    video_main.POLL_INTERVAL = 0.001
 
     stream_key1, queue1 = await video_main._register_consumer("cam1", "processed")
     stream_key2, queue2 = await video_main._register_consumer("cam1", "processed")

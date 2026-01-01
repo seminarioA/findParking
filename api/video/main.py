@@ -69,12 +69,13 @@ async def _producer_loop(stream_key: str, redis_key: str) -> None:
                 break
 
             try:
-                frame = redis_client.get(redis_key)
+                frame = await asyncio.to_thread(redis_client.get, redis_key)
                 if frame:
                     for queue in targets:
                         try:
                             queue.put_nowait(frame)
                         except asyncio.QueueFull:
+                            logger.debug("Dropping stale frame for %s", stream_key)
                             with suppress(asyncio.QueueEmpty):
                                 queue.get_nowait()
                             queue.put_nowait(frame)
