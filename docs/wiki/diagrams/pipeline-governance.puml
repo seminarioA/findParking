@@ -1,11 +1,10 @@
 @startuml pipeline-governance
-!theme cerulean
-skinparam node {
-  BackgroundColor White
-  BorderColor DarkBlue
-}
+skinparam monochrome true
+skinparam shadowing false
+skinparam backgroundColor White
+skinparam defaultFontColor Black
 
-title Gobernanza de Implementación del Pipeline CI/CD — findParking (TOGAF Fase G)
+title Gobernanza de Implementación del Pipeline CI/CD — findParking
 
 node "Push / Pull Request" as trigger
 

@@ -2,7 +2,7 @@
 
 Documentación del workflow [`ci-cd-pipeline.yml`](../../.github/workflows/ci-cd-pipeline.yml): qué corre, en qué orden, y qué condiciones determinan si un job se ejecuta o se salta.
 
-Los dos diagramas usan el mismo tipo de gráfico (diagrama de despliegue/componentes: `node`/`package`/`database`), cada uno mapeado a una única fase de TOGAF ADM (ninguno mezcla fases).
+Los diagramas son monocromáticos (pensados para poder imprimirse) y usan el mismo tipo de gráfico (diagrama de despliegue/componentes: `node`/`package`/`database`). La clasificación TOGAF de cada uno vive en esta página, no en el propio diagrama.
 
 ## Diagrama 1 — Arquitectura Tecnológica del Pipeline
 
@@ -13,9 +13,23 @@ Componentes tecnológicos y su topología: repositorio, runner de CI, registry d
 Fuente PlantUML: [`diagrams/pipeline-technology-architecture.puml`](diagrams/pipeline-technology-architecture.puml)
 
 <details>
-<summary>📎 Nota de clasificación TOGAF (click para expandir)</summary>
+<summary>📎 Ficha del diagrama (click para expandir)</summary>
 
-Este diagrama pertenece a la **Fase D — Arquitectura de Tecnología**: describe qué plataformas/herramientas existen (VCS, runner de CI, registry, VPS) y cómo están topológicamente conectadas, sin entrar en las reglas de gobernanza que controlan el flujo (eso vive en el Diagrama 2, en su propia fase).
+**Tipo de diagrama:** Diagrama de despliegue / componentes (PlantUML)
+
+---
+
+**Framework:** TOGAF
+**Fase:** D — Arquitectura de Tecnología
+**Justificación de la fase:** describe qué plataformas y herramientas existen (VCS, runner de CI, registry, VPS) y cómo están topológicamente conectadas entre sí -- exactamente el alcance de la Fase D. No entra en reglas de gobernanza/control de flujo (eso es el Diagrama 2, en su propia fase).
+
+---
+
+**Autor:** Alejandro Valentino Seminario Medina
+
+---
+
+**Versión del gráfico:** v0.0001
 
 </details>
 
@@ -28,9 +42,23 @@ Los puntos de control reales que gobiernan si el código avanza: los 2 quality g
 Fuente PlantUML: [`diagrams/pipeline-governance.puml`](diagrams/pipeline-governance.puml)
 
 <details>
-<summary>📎 Nota de clasificación TOGAF (click para expandir)</summary>
+<summary>📎 Ficha del diagrama (click para expandir)</summary>
 
-Este diagrama pertenece a la **Fase G — Gobernanza de la Implementación**: describe los controles/gates que aseguran conformidad antes de que algo llegue a producción (quality gates, branch protection, el flag manual de despliegue), que es exactamente el alcance de la Fase G (no se mezcla con la Fase D del Diagrama 1).
+**Tipo de diagrama:** Diagrama de despliegue / componentes (PlantUML)
+
+---
+
+**Framework:** TOGAF
+**Fase:** G — Gobernanza de la Implementación
+**Justificación de la fase:** describe los controles/gates que aseguran conformidad antes de que algo llegue a producción (quality gates obligatorios, branch protection, el flag manual de despliegue) -- exactamente el alcance de la Fase G. No se mezcla con la Fase D del Diagrama 1.
+
+---
+
+**Autor:** Alejandro Valentino Seminario Medina
+
+---
+
+**Versión del gráfico:** v0.0001
 
 </details>
 
