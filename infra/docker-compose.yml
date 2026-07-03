@@ -26,7 +26,7 @@ services:
       retries: 5
 
   auth_service:
-    image: aleseminario/findparking-services-auth-service:${IMAGE_TAG:-latest}
+    image: ghcr.io/seminarioa/findparking-services-auth-service:${IMAGE_TAG:-latest}
     environment:
       - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-auth_user}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in infra/.env}@postgres:5432/${POSTGRES_DB:-auth_db}
     env_file:
@@ -47,7 +47,7 @@ services:
       start_period: 15s
 
   processing_service:
-    image: aleseminario/findparking-services-processing-service:${IMAGE_TAG:-latest}
+    image: ghcr.io/seminarioa/findparking-services-processing-service:${IMAGE_TAG:-latest}
     environment:
       - REDIS_HOST=redis
     depends_on:
@@ -56,7 +56,7 @@ services:
     restart: unless-stopped
 
   video_service:
-    image: aleseminario/findparking-services-video-service:${IMAGE_TAG:-latest}
+    image: ghcr.io/seminarioa/findparking-services-video-service:${IMAGE_TAG:-latest}
     environment:
       - REDIS_HOST=redis
     env_file:
@@ -77,7 +77,7 @@ services:
       start_period: 15s
 
   occupancy_service:
-    image: aleseminario/findparking-services-occupancy-service:${IMAGE_TAG:-latest}
+    image: ghcr.io/seminarioa/findparking-services-occupancy-service:${IMAGE_TAG:-latest}
     environment:
       - REDIS_HOST=redis
     env_file:
@@ -98,7 +98,7 @@ services:
       start_period: 15s
 
   video_stream_service:
-    image: aleseminario/findparking-services-video-stream-service:${IMAGE_TAG:-latest}
+    image: ghcr.io/seminarioa/findparking-services-video-stream-service:${IMAGE_TAG:-latest}
     environment:
       - VIDEO_PATHS={"entrada1":"resources/parking1.mp4"}
     volumes:
@@ -121,7 +121,7 @@ services:
       start_period: 15s
 
   frontend_service:
-    image: aleseminario/findparking-services-frontend-service:${IMAGE_TAG:-latest}
+    image: ghcr.io/seminarioa/findparking-services-frontend-service:${IMAGE_TAG:-latest}
     restart: unless-stopped
     expose:
       - "80"
