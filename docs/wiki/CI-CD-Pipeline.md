@@ -2,33 +2,40 @@
 
 Documentación del workflow [`ci-cd-pipeline.yml`](../../.github/workflows/ci-cd-pipeline.yml): qué corre, en qué orden, y qué condiciones determinan si un job se ejecuta o se salta.
 
-## Diagrama 1 — Vista general del pipeline
+Los dos diagramas usan el mismo tipo de gráfico (diagrama de despliegue/componentes: `node`/`package`/`database`), cada uno mapeado a una única fase de TOGAF ADM (ninguno mezcla fases).
 
-Muestra los 4 jobs (`test`, `lint`, `build-and-push`, `deploy`) y las condiciones (`if:`) que deciden si `build-and-push` y `deploy` corren o se saltan según el evento y la rama.
+## Diagrama 1 — Arquitectura Tecnológica del Pipeline
 
-![Vista general del pipeline](images/pipeline-overview.svg)
+Componentes tecnológicos y su topología: repositorio, runner de CI, registry de contenedores y el VPS de producción.
 
-Fuente PlantUML: [`diagrams/pipeline-overview.puml`](diagrams/pipeline-overview.puml)
+![Arquitectura tecnológica del pipeline](images/pipeline-technology-architecture.svg)
 
-## Diagrama 2 — Secuencia de build & deploy
+Fuente PlantUML: [`diagrams/pipeline-technology-architecture.puml`](diagrams/pipeline-technology-architecture.puml)
 
-Detalla qué pasa desde que se hace push a `main` hasta que los contenedores quedan corriendo en el VPS de producción: build-and-push construye y publica en GHCR, y deploy hace `docker compose pull/up` sobre el host remoto vía SSH.
+<details>
+<summary>📎 Nota de clasificación TOGAF (click para expandir)</summary>
 
-![Secuencia de build y deploy](images/deploy-sequence.svg)
+Este diagrama pertenece a la **Fase D — Arquitectura de Tecnología**: describe qué plataformas/herramientas existen (VCS, runner de CI, registry, VPS) y cómo están topológicamente conectadas, sin entrar en las reglas de gobernanza que controlan el flujo (eso vive en el Diagrama 2, en su propia fase).
 
-Fuente PlantUML: [`diagrams/deploy-sequence.puml`](diagrams/deploy-sequence.puml)
+</details>
+
+## Diagrama 2 — Gobernanza de Implementación del Pipeline
+
+Los puntos de control reales que gobiernan si el código avanza: los 2 quality gates obligatorios (`test`, `lint`), la regla de branch protection que exige que ambos pasen antes de mergear a `main`, y la variable de repo `DEPLOY_ENABLED` que decide si el deploy a producción corre o se salta.
+
+![Gobernanza de implementación del pipeline](images/pipeline-governance.svg)
+
+Fuente PlantUML: [`diagrams/pipeline-governance.puml`](diagrams/pipeline-governance.puml)
+
+<details>
+<summary>📎 Nota de clasificación TOGAF (click para expandir)</summary>
+
+Este diagrama pertenece a la **Fase G — Gobernanza de la Implementación**: describe los controles/gates que aseguran conformidad antes de que algo llegue a producción (quality gates, branch protection, el flag manual de despliegue), que es exactamente el alcance de la Fase G (no se mezcla con la Fase D del Diagrama 1).
+
+</details>
 
 ## Notas
 
 - `test` y `lint` corren siempre (push y pull request), en paralelo.
-- `build-and-push` y `deploy` solo corren en push a `main` -- nunca en PRs ni en push a `dev`/`test`.
+- `build-and-push` y `deploy` solo corren en push a `main` — nunca en PRs ni en push a `dev`/`test`.
 - `deploy` además requiere la variable de repo `DEPLOY_ENABLED=true`; mientras no exista, el job se salta (no falla).
-
----
-
-<details>
-<summary>📎 Nota de clasificación (click para expandir)</summary>
-
-Ambos diagramas de esta página pertenecen a una única fase de TOGAF ADM: **Fase D — Arquitectura de Tecnología**. Describen la topología de infraestructura de build/despliegue (runners de CI, registry de contenedores, host de producción) y las herramientas/plataformas que la implementan, que es exactamente el alcance de la Fase D (no se mezcla con Fase B/C ni con Fase G).
-
-</details>
