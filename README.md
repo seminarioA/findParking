@@ -104,20 +104,28 @@ Diagramas detallados (paquetes, clases y microservicios) en [`docs/`](docs/):
 
 ### Instalación manual (Linux/WSL)
 
+Por reproducibilidad, las imágenes de los microservicios se construyen **una sola vez en CI** (ver [Despliegue (CI/CD)](#despliegue-cicd)) y se publican en GHCR. El VPS (o tu máquina) solo las **descarga y las corre**, nunca las reconstruye localmente — así la imagen que corre en producción es exactamente la misma que pasó los tests.
+
 ```bash
-# 1. Instalar git
-sudo apt update && sudo apt install git
+# 1. Instalar git, Docker y el plugin de Docker Compose
+sudo apt update && sudo apt install -y git docker.io docker-compose-plugin
 
 # 2. Clonar repositorio
 git clone https://github.com/seminarioA/findParking.git
-cd findParking
+cd findParking/infra
 
-# 3. Levantar microservicios
-cd infra
-docker-compose -f docker-compose.yml up --build
+# 3. (Solo si los packages de GHCR aun son privados) autenticarse con un
+#    Personal Access Token con scope read:packages
+echo "$GHCR_TOKEN" | sudo docker login ghcr.io -u "$GHCR_USER" --password-stdin
+
+# 4. Descargar las imagenes ya construidas en CI y levantarlas (nunca --build)
+sudo docker compose -f docker-compose.yml pull
+sudo docker compose -f docker-compose.yml up -d
 ```
 
 ### Instalación automática (Linux/WSL)
+
+[`infra/deploy.sh`](infra/deploy.sh) hace exactamente lo mismo (clona, hace `pull` y levanta con `up -d`, sin reconstruir nada):
 
 ```bash
 ./infra/deploy.sh
@@ -125,7 +133,7 @@ docker-compose -f docker-compose.yml up --build
 
 ### Acceso al servicio
 
-- Frontend: `http://<ip pública/localhost>:3000`
+- Frontend: `http://<ip pública/localhost>` (puerto 80, vía el gateway de nginx)
 
 ## Variables de entorno
 
