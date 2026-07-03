@@ -1,5 +1,11 @@
 # Welcome to your Lovable project
 
+## Deploy
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FseminarioA%2FfindParking&root-directory=ui%2Ffrontend&project-name=findparking-frontend&repository-name=findparking-frontend)
+
+Imports this repo into your own Vercel account with the frontend's root directory (`ui/frontend`) pre-configured. After importing, set the `VITE_API_BASE_URL` environment variable in the Vercel project settings to point at your deployed API gateway.
+
 ## Project info
 
 **URL**: https://lovable.dev/projects/35cc67db-97ad-4a84-8036-ddfb60349fe8
