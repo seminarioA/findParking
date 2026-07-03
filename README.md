@@ -7,35 +7,48 @@
                                                   /____/ 
 ```
 
-##
-![Computer Vision](https://img.shields.io/badge/Computer_Vision-purple)
-![Machine Learning](https://img.shields.io/badge/Machine_Learning-blue)
-![Artificial Intelligence](https://img.shields.io/badge/Artificial_Inteligence-green)
-![Object Detection](https://img.shields.io/badge/Object_Detection-yellow)
-![MLOps](https://img.shields.io/badge/MLOps-red)
-![Yolov11](https://img.shields.io/badge/YoloV11-orange)
+<p align="center"><b>Detección de ocupación de estacionamientos en tiempo real a partir de streams de video, con Computer Vision.</b></p>
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FseminarioA%2FfindParking&root-directory=ui%2Ffrontend&project-name=findparking-frontend&repository-name=findparking-frontend)
+<p align="center">
+  <img src="https://github.com/seminarioA/findParking/actions/workflows/dockerhub-images.yml/badge.svg" alt="CI/CD Pipeline">
+  <img src="https://img.shields.io/badge/Computer_Vision-purple" alt="Computer Vision">
+  <img src="https://img.shields.io/badge/Machine_Learning-blue" alt="Machine Learning">
+  <img src="https://img.shields.io/badge/Artificial_Inteligence-green" alt="Artificial Intelligence">
+  <img src="https://img.shields.io/badge/Object_Detection-yellow" alt="Object Detection">
+  <img src="https://img.shields.io/badge/MLOps-red" alt="MLOps">
+  <img src="https://img.shields.io/badge/YoloV11-orange" alt="Yolov11">
+</p>
+
+<p align="center">
+  <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FseminarioA%2FfindParking&root-directory=ui%2Ffrontend&project-name=findparking-frontend&repository-name=findparking-frontend">
+    <img src="https://vercel.com/button" alt="Deploy with Vercel">
+  </a>
+</p>
 
 ![findParking preview on desktop, tablet and mobile](docs/hero-banner.png)
 
-## 🦉 FPKv0.5
+## Tabla de contenido
 
-FindParking es una plataforma que permite determinar la ocupación de plazas de estacionamiento (libre / ocupada) a partir de streams de video. Para ello, hace uso de tecnicas de Vision por Computadora (IA).
+- [Acerca de](#acerca-de)
+- [Arquitectura](#arquitectura)
+- [Stack](#stack)
+- [Quickstart](#quickstart)
+- [Variables de entorno](#variables-de-entorno)
+- [Testing](#testing)
+- [Despliegue (CI/CD)](#despliegue-cicd)
+- [Contribuyentes](#contribuyentes)
+- [Licencia](#licencia)
 
-## Tabla de Contenido
-- [Acerca de](#-acerca-de)
-- [Instalación](#-instalación)
-  - [Instalación manual](#instalación-manual)
-  - [Instalación automatica](#instalación-automatica-linuxwsl)
-- [Stack](#-stack)
-- [Contribuyentes](#-contribuyentes)
+## Acerca de
 
-## 👩🏻‍💻 Acerca de
-Tecnicamente, FindParking captura frames de cámaras configuradas, ejecuta detección de vehículos con YOLO + OpenCV, mapea detecciones a plazas definidas y expone la ocupación actual mediante REST y WebSockets.
+FindParking es una plataforma que determina la ocupación de plazas de estacionamiento (libre / ocupada) a partir de streams de video, usando técnicas de Visión por Computadora (YOLO + OpenCV).
 
-### 🧩 Monolito modular
-La base de código se reorganizó como un monolito modular para agrupar responsabilidades:
+Técnicamente, captura frames de cámaras configuradas, ejecuta detección de vehículos, mapea las detecciones a plazas definidas y expone la ocupación actual mediante REST y WebSockets.
+
+## Arquitectura
+
+La base de código está organizada como un **monolito modular**, agrupando responsabilidades por dominio:
+
 ```
 findParking/
 ├── infra/        # Docker Compose, gateway y despliegue
@@ -48,47 +61,13 @@ findParking/
 └── tests/        # Pruebas de contrato e integración ligera
 ```
 
-## 👩🏻‍🔬 Instalación
+Diagramas detallados (paquetes, clases y microservicios) en [`docs/`](docs/):
+- [Diagrama de microservicios](docs/microservices_diagram.drawio)
+- [Diagrama de clases](docs/Diagrama%20de%20Clases.drawio)
+- [Info de diagrama de paquetes UML](docs/uml_package_diagram_info.md)
+- [Info de diagrama de clases UML](docs/uml_class_diagram_info.md)
 
-¡Existen dos maneras!
-
-### Instalación manual (Linux/WSL)
-
-#### Instalar git
-```bash
-sudo apt update
-sudo apt install git
-```
-
-#### Clonar repositorio
-```bash
-git clone https://github.com/seminarioA/findParking.git
-```
-
-#### Abrir Carpeta
-```bash
-cd findParking
-cd infra
-```
-
-#### Levantar microservicios
-
-```bash
-docker-compose -f docker-compose.yml up --build
-```
-
-### Instalación automatica (Linux/WSL)
-
-#### Ejecutar el script
-```bash
-./infra/deploy.sh
-```
-
-### ¿Y como accedo al servicio?
-El punto de acceso es:
-- Frontend: http://<ip publica/localhost>:3000
-
-## 💻 Stack
+## Stack
 
 ### IA/ML
 ![OpenCV](https://img.shields.io/badge/opencv-%23white.svg?style=for-the-badge&logo=opencv&logoColor=white)
@@ -100,7 +79,7 @@ El punto de acceso es:
 ![Pytest](https://img.shields.io/badge/pytest-%23ffffff.svg?style=for-the-badge&logo=pytest&logoColor=2f9fe3)
 ![PyPi](https://img.shields.io/badge/pypi-%23ececec.svg?style=for-the-badge&logo=pypi&logoColor=1f73b7)
 
-### Bases de Datos
+### Bases de datos
 ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)
 
@@ -121,24 +100,86 @@ El punto de acceso es:
 ![Google Cloud](https://img.shields.io/badge/GoogleCloud-%234285F4.svg?style=for-the-badge&logo=google-cloud&logoColor=white)
 ![Azure](https://img.shields.io/badge/azure-%230072C6.svg?style=for-the-badge&logo=microsoftazure&logoColor=white)
 
-## 👩🏻‍🔬 Contribuyentes
+## Quickstart
+
+### Instalación manual (Linux/WSL)
+
+```bash
+# 1. Instalar git
+sudo apt update && sudo apt install git
+
+# 2. Clonar repositorio
+git clone https://github.com/seminarioA/findParking.git
+cd findParking
+
+# 3. Levantar microservicios
+cd infra
+docker-compose -f docker-compose.yml up --build
+```
+
+### Instalación automática (Linux/WSL)
+
+```bash
+./infra/deploy.sh
+```
+
+### Acceso al servicio
+
+- Frontend: `http://<ip pública/localhost>:3000`
+
+## Variables de entorno
+
+Cada servicio incluye su propio `.env.example` como plantilla — cópialo a `.env` (gitignored) y completa los valores reales antes de levantar el stack:
+
+| Servicio | Archivo | Variables clave |
+| --- | --- | --- |
+| Infra (Postgres) | [`infra/.env.example`](infra/.env.example) | `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD` |
+| Auth | [`api/auth/.env.example`](api/auth/.env.example) | `SECRET_KEY`, `JWT_SECRET`, `JWT_ALGORITHM`, `ACCESS_TOKEN_EXPIRE_MINUTES`, `DB_URL` |
+| Occupancy | [`api/occupancy/.env.example`](api/occupancy/.env.example) | `SECRET_KEY`, `JWT_SECRET`, `REDIS_HOST`, `REDIS_PORT`, `REDIS_DB` |
+| Video | [`api/video/.env.example`](api/video/.env.example) | `JWT_SECRET`, `SECRET_KEY`, `REDIS_HOST`, `REDIS_PORT`, `REDIS_DB` |
+
+`SECRET_KEY`/`JWT_SECRET` deben ser el mismo valor en los tres servicios de `api/`, ya que comparten la validación de tokens JWT.
+
+## Testing
+
+Los tests bajo [`tests/`](tests/) son unitarios y aislados: usan `TestClient` de FastAPI directamente sobre cada app (sin stack en vivo), con Redis mockeado y una base sqlite temporal para auth.
+
+```bash
+pip install -r api/auth/requirements.txt -r api/occupancy/requirements.txt -r api/video/requirements.txt pytest httpx
+pytest tests/ -v
+```
+
+Cobertura actual: autenticación (`test_auth.py`), ocupación (`test_occupancy.py`), video vía WebSocket (`test_video_ws.py`, `test_video_spmc.py`).
+
+## Despliegue (CI/CD)
+
+El workflow [`dockerhub-images.yml`](.github/workflows/dockerhub-images.yml) corre en cada push/PR a `main`, `dev` y `test`:
+
+1. **Run Backend Unit Tests (pytest)** — siempre.
+2. **Build & Push Docker Images to Docker Hub** — solo en push a `main`; construye y publica cada `Dockerfile` del repo con el nombre de imagen que `infra/docker-compose.yml` espera.
+3. **Deploy to Production via SSH** — solo en push a `main` y con la variable de repo `DEPLOY_ENABLED=true`; hace `docker compose pull/up` en el host de producción.
+
+El frontend (`ui/frontend`) se puede desplegar de forma independiente en Vercel con el botón de arriba.
+
+## Contribuyentes
+
 ### 🧑🏻‍🔬 Alejandro Seminario
 ![Computer Vision Engineer](https://img.shields.io/badge/Computer_Vision_Egineer-purple)
 ![MLOps](https://img.shields.io/badge/MLOps-red)
 ![Machine Learning Tech Lead](https://img.shields.io/badge/ML;TL-Machine_Learning_Tech_Lead-blue)
 
-Redes:
-
 [![LinkedIn][1]][2] [![GitHub][3]][4]
 
-[1]:  https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white
-[2]:  https://www.linkedin.com/in/alejandroseminariomedina/
+[1]: https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white
+[2]: https://www.linkedin.com/in/alejandroseminariomedina/
+[3]: https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white
+[4]: https://github.com/seminarioA
 
-[3]:  https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white
-[4]:  https://github.com/seminarioA
+## Licencia
 
+Este proyecto todavía no define una licencia open-source formal. Contacta al mantenedor antes de reutilizar el código fuera de este repositorio.
 
-##
+---
 
 ```
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣼⣄⢻⣆⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
