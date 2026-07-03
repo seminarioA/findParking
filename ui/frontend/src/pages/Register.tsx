@@ -64,8 +64,8 @@ export default function Register() {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-3 text-center">
-          <div className="mx-auto w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center">
-            <ParkingCircle className="h-10 w-10 text-primary" />
+          <div className="mx-auto w-16 h-16 rounded-full border-2 border-primary flex items-center justify-center">
+            <ParkingCircle className="h-9 w-9 text-primary" />
           </div>
           <CardTitle className="text-2xl">Crear cuenta</CardTitle>
           <CardDescription>

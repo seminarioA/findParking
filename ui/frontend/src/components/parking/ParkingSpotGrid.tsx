@@ -33,7 +33,7 @@ export default function ParkingSpotGrid({ spots, limit }: ParkingSpotGridProps) 
                 'flex flex-col items-center justify-center rounded-lg p-3 aspect-square transition-all',
                 isOccupied
                   ? 'bg-destructive text-destructive-foreground'
-                  : 'bg-success text-white'
+                  : 'bg-success text-success-foreground'
               )}
               role="status"
               aria-label={`Espacio ${spot.id}: ${isOccupied ? 'ocupado' : 'libre'}`}

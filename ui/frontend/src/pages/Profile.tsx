@@ -57,7 +57,7 @@ export default function Profile() {
       <main className="p-4 space-y-6">
         <div className="flex flex-col items-center gap-4">
           <div className="relative">
-            <Avatar className="h-28 w-28 border-4 border-primary">
+            <Avatar className="h-28 w-28 border-2 border-primary">
               <AvatarImage src={user?.avatar} alt={user?.name} />
               <AvatarFallback className="text-2xl font-bold bg-primary/20">
                 {user?.name ? getInitials(user.name) : 'U'}
