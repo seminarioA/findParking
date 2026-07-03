@@ -107,3 +107,27 @@ jobs:
         run: |
           echo "Imágenes publicadas bajo: ${REPO_ROOT_IMAGE}-<servicio>:<tag>"
           echo "Usa :latest para despliegues flotantes o el tag de commit para fijar versión."
+
+  deploy:
+    needs: build-and-push
+    # Disabled by default: set the repo variable DEPLOY_ENABLED=true (Settings
+    # > Secrets and variables > Actions > Variables) once DEPLOY_HOST,
+    # DEPLOY_USER, DEPLOY_SSH_KEY and DEPLOY_PATH secrets are configured.
+    # Until then this job is skipped, not failed.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.DEPLOY_ENABLED == 'true'
+    environment: DevOps
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            set -euo pipefail
+            cd "${{ secrets.DEPLOY_PATH }}"
+            export IMAGE_TAG="$(echo ${{ github.sha }} | cut -c1-7)"
+            docker compose -f infra/docker-compose.yml pull
+            docker compose -f infra/docker-compose.yml up -d
+            docker image prune -f
