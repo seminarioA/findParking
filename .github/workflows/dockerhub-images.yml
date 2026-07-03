@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
 
@@ -67,6 +67,17 @@ jobs:
           echo "Usando imagen raíz: ${ROOT_IMAGE}"
           echo "SHA corto: ${SHORT_SHA}"
 
+          # Nombres de imagen que infra/docker-compose.yml ya espera pullear
+          # (no cambiar sin actualizar el compose a la vez).
+          declare -A SERVICE_IMAGE_MAP=(
+            ["api/auth/Dockerfile"]="services-auth-service"
+            ["api/occupancy/Dockerfile"]="services-occupancy-service"
+            ["api/video/Dockerfile"]="services-video-service"
+            ["ui/frontend/Dockerfile"]="services-frontend-service"
+            ["vision/processing/Dockerfile"]="services-processing-service"
+            ["vision/video_stream/Dockerfile"]="services-video-stream-service"
+          )
+
           # Encuentra todos los Dockerfiles versionados
           mapfile -t DOCKERFILES < <(git ls-files | grep -E '^(.*/)?Dockerfile$' || true)
 
@@ -78,11 +89,16 @@ jobs:
           for df in "${DOCKERFILES[@]}"; do
             context_dir="$(dirname "$df")"
 
-            if [ "$context_dir" = "." ]; then
+            if [ -n "${SERVICE_IMAGE_MAP[$df]:-}" ]; then
+              service="${SERVICE_IMAGE_MAP[$df]}"
+            elif [ "$context_dir" = "." ]; then
               service="root"
+              echo "AVISO: ${df} no esta en SERVICE_IMAGE_MAP, usando nombre generico '${service}'."
             else
-              # nombre de servicio estable a partir de la ruta
+              # nombre de servicio generico a partir de la ruta (fallback para
+              # Dockerfiles nuevos que aun no se agregaron a SERVICE_IMAGE_MAP)
               service="$(echo "$context_dir" | tr '/_' '--')"
+              echo "AVISO: ${df} no esta en SERVICE_IMAGE_MAP, usando nombre generico '${service}'. Agregalo al mapa si docker-compose.yml debe pullearlo."
             fi
 
             image="${ROOT_IMAGE}-${service}"
@@ -107,3 +123,27 @@ jobs:
         run: |
           echo "Imágenes publicadas bajo: ${REPO_ROOT_IMAGE}-<servicio>:<tag>"
           echo "Usa :latest para despliegues flotantes o el tag de commit para fijar versión."
+
+  deploy:
+    needs: build-and-push
+    # Disabled by default: set the repo variable DEPLOY_ENABLED=true (Settings
+    # > Secrets and variables > Actions > Variables) once DEPLOY_HOST,
+    # DEPLOY_USER, DEPLOY_SSH_KEY and DEPLOY_PATH secrets are configured.
+    # Until then this job is skipped, not failed.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.DEPLOY_ENABLED == 'true'
+    environment: DevOps
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            set -euo pipefail
+            cd "${{ secrets.DEPLOY_PATH }}"
+            export IMAGE_TAG="$(echo ${{ github.sha }} | cut -c1-7)"
+            docker compose -f infra/docker-compose.yml pull
+            docker compose -f infra/docker-compose.yml up -d
+            docker image prune -f
