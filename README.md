@@ -19,10 +19,25 @@
   <img src="https://img.shields.io/badge/YoloV11-orange" alt="Yolov11">
 </p>
 
+<table align="center">
+  <tr>
+    <td align="center">
+      <sub><b>Frontend</b></sub><br/>
+      <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FseminarioA%2FfindParking&root-directory=ui%2Ffrontend&project-name=findparking-frontend&repository-name=findparking-frontend">
+        <img src="https://vercel.com/button" alt="Deploy Frontend with Vercel">
+      </a>
+    </td>
+    <td align="center">
+      <sub><b>Backend (solo auth)</b></sub><br/>
+      <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FseminarioA%2FfindParking&root-directory=api%2Fauth&project-name=findparking-auth-api&repository-name=findparking-auth-api">
+        <img src="https://vercel.com/button" alt="Deploy Backend (auth service) with Vercel">
+      </a>
+    </td>
+  </tr>
+</table>
+
 <p align="center">
-  <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FseminarioA%2FfindParking&root-directory=ui%2Ffrontend&project-name=findparking-frontend&repository-name=findparking-frontend">
-    <img src="https://vercel.com/button" alt="Deploy with Vercel">
-  </a>
+  <sub>El botón de <b>Backend</b> despliega únicamente el servicio <code>api/auth</code> como funciones serverless (necesita configurar <code>DATABASE_URL</code>/<code>SECRET_KEY</code>/<code>JWT_SECRET</code> en Vercel después de importar, apuntando a un Postgres externo). Los demás servicios (occupancy, video, vision) usan WebSockets/Redis y <b>no</b> corren en el modelo serverless de Vercel — para el stack completo, usa el VPS con Docker Compose (ver <a href="#despliegue-cicd">Despliegue</a>).</sub>
 </p>
 
 ![findParking preview on desktop, tablet and mobile](docs/hero-banner.png)
@@ -66,6 +81,7 @@ Diagramas detallados (paquetes, clases y microservicios) en [`docs/`](docs/):
 - [Diagrama de clases](docs/Diagrama%20de%20Clases.drawio)
 - [Info de diagrama de paquetes UML](docs/uml_package_diagram_info.md)
 - [Info de diagrama de clases UML](docs/uml_class_diagram_info.md)
+- [Wiki: CI/CD Pipeline (diagramas PlantUML de GitHub Actions)](docs/wiki/CI-CD-Pipeline.md)
 
 ## Stack
 
