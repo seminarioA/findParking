@@ -60,7 +60,7 @@ services:
       - auth_service
     restart: unless-stopped
     expose:
-      - "8000"
+      - "8002"
 
   video_stream_service:
     image: aleseminario/findparking-services-video-stream-service:${IMAGE_TAG:-latest}
