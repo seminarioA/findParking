@@ -22,17 +22,20 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install --no-cache-dir -r api/video/requirements.txt pytest
+          pip install --no-cache-dir \
+            -r api/auth/requirements.txt \
+            -r api/occupancy/requirements.txt \
+            -r api/video/requirements.txt \
+            pytest httpx
 
       - name: Run unit tests
         run: |
-          # Only tests/test_video_spmc.py is a real, isolated unit test today:
-          # it imports api/video/main.py directly and mocks Redis, so it needs
-          # no network access. The other test files under tests/ are
-          # end-to-end tests that expect the full docker-compose stack (and,
-          # in the case of tests/test_templates.py, a Flask app/templates
-          # folder that no longer exists in this repo) — see TICKET-34 notes.
-          pytest tests/test_video_spmc.py -v
+          # Every file left under tests/ is now a real, isolated unit test:
+          # they import each service's app directly (via TestClient) and
+          # mock Redis/use a temp sqlite DB, so they need no live stack.
+          # httpx is only needed for FastAPI's TestClient in tests, not for
+          # running the services, so it's not in any service's requirements.txt.
+          pytest tests/ -v
 
   build-and-push:
     needs: test
