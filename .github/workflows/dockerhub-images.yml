@@ -67,6 +67,17 @@ jobs:
           echo "Usando imagen raíz: ${ROOT_IMAGE}"
           echo "SHA corto: ${SHORT_SHA}"
 
+          # Nombres de imagen que infra/docker-compose.yml ya espera pullear
+          # (no cambiar sin actualizar el compose a la vez).
+          declare -A SERVICE_IMAGE_MAP=(
+            ["api/auth/Dockerfile"]="services-auth-service"
+            ["api/occupancy/Dockerfile"]="services-occupancy-service"
+            ["api/video/Dockerfile"]="services-video-service"
+            ["ui/frontend/Dockerfile"]="services-frontend-service"
+            ["vision/processing/Dockerfile"]="services-processing-service"
+            ["vision/video_stream/Dockerfile"]="services-video-stream-service"
+          )
+
           # Encuentra todos los Dockerfiles versionados
           mapfile -t DOCKERFILES < <(git ls-files | grep -E '^(.*/)?Dockerfile$' || true)
 
@@ -78,11 +89,16 @@ jobs:
           for df in "${DOCKERFILES[@]}"; do
             context_dir="$(dirname "$df")"
 
-            if [ "$context_dir" = "." ]; then
+            if [ -n "${SERVICE_IMAGE_MAP[$df]:-}" ]; then
+              service="${SERVICE_IMAGE_MAP[$df]}"
+            elif [ "$context_dir" = "." ]; then
               service="root"
+              echo "AVISO: ${df} no esta en SERVICE_IMAGE_MAP, usando nombre generico '${service}'."
             else
-              # nombre de servicio estable a partir de la ruta
+              # nombre de servicio generico a partir de la ruta (fallback para
+              # Dockerfiles nuevos que aun no se agregaron a SERVICE_IMAGE_MAP)
               service="$(echo "$context_dir" | tr '/_' '--')"
+              echo "AVISO: ${df} no esta en SERVICE_IMAGE_MAP, usando nombre generico '${service}'. Agregalo al mapa si docker-compose.yml debe pullearlo."
             fi
 
             image="${ROOT_IMAGE}-${service}"
