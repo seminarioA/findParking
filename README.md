@@ -10,7 +10,7 @@
 <p align="center"><b>Detección de ocupación de estacionamientos en tiempo real a partir de streams de video, con Computer Vision.</b></p>
 
 <p align="center">
-  <img src="https://github.com/seminarioA/findParking/actions/workflows/dockerhub-images.yml/badge.svg" alt="CI/CD Pipeline">
+  <img src="https://github.com/seminarioA/findParking/actions/workflows/ci-cd-pipeline.yml/badge.svg" alt="CI/CD Pipeline">
   <img src="https://img.shields.io/badge/Computer_Vision-purple" alt="Computer Vision">
   <img src="https://img.shields.io/badge/Machine_Learning-blue" alt="Machine Learning">
   <img src="https://img.shields.io/badge/Artificial_Inteligence-green" alt="Artificial Intelligence">
@@ -153,10 +153,10 @@ Cobertura actual: autenticación (`test_auth.py`), ocupación (`test_occupancy.p
 
 ## Despliegue (CI/CD)
 
-El workflow [`dockerhub-images.yml`](.github/workflows/dockerhub-images.yml) corre en cada push/PR a `main`, `dev` y `test`:
+El workflow [`ci-cd-pipeline.yml`](.github/workflows/ci-cd-pipeline.yml) corre en cada push/PR a `main`, `dev` y `test`:
 
 1. **Run Backend Unit Tests (pytest)** — siempre.
-2. **Build & Push Docker Images to Docker Hub** — solo en push a `main`; construye y publica cada `Dockerfile` del repo con el nombre de imagen que `infra/docker-compose.yml` espera.
+2. **Build & Push Docker Images to GHCR** — solo en push a `main`; construye y publica cada `Dockerfile` del repo en GitHub Container Registry (`ghcr.io`), autenticando con el `GITHUB_TOKEN` automático (sin secretos manuales), con el nombre de imagen que `infra/docker-compose.yml` espera.
 3. **Deploy to Production via SSH** — solo en push a `main` y con la variable de repo `DEPLOY_ENABLED=true`; hace `docker compose pull/up` en el host de producción.
 
 El frontend (`ui/frontend`) se puede desplegar de forma independiente en Vercel con el botón de arriba.
