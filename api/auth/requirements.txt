@@ -7,4 +7,4 @@ python-jose
 gunicorn
 uvicorn
 email-validator
-bcrypt==4.0.1
+bcrypt==5.0.0
