@@ -81,7 +81,7 @@ Diagramas detallados (paquetes, clases y microservicios) en [`docs/`](docs/):
 - [Diagrama de clases](docs/Diagrama%20de%20Clases.drawio)
 - [Info de diagrama de paquetes UML](docs/uml_package_diagram_info.md)
 - [Info de diagrama de clases UML](docs/uml_class_diagram_info.md)
-- [Wiki: CI/CD Pipeline (diagramas PlantUML de GitHub Actions)](docs/wiki/CI-CD-Pipeline.md)
+- [Wiki: CI/CD Pipeline (diagramas de arquitectura tecnológica y gobernanza)](https://github.com/seminarioA/findParking/wiki/CI-CD-Pipeline)
 
 ## Stack
 
