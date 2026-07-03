@@ -38,9 +38,43 @@ jobs:
           # running the services, so it's not in any service's requirements.txt.
           pytest tests/ -v
 
+  lint:
+    name: Lint & Security Scan (ruff + pip-audit)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install linters
+        run: pip install --no-cache-dir ruff pip-audit
+
+      - name: Ruff check (lint)
+        run: ruff check .
+
+      - name: Ruff format check
+        run: ruff format --check .
+
+      - name: pip-audit (dependency vulnerabilities)
+        run: |
+          set -euo pipefail
+          for req in \
+            api/auth/requirements.txt \
+            api/occupancy/requirements.txt \
+            api/video/requirements.txt \
+            vision/processing/requirements.txt \
+            vision/video_stream/requirements.txt; do
+            echo "----------------------------------------"
+            echo "Auditando ${req}"
+            echo "----------------------------------------"
+            pip-audit -r "${req}"
+          done
+
   build-and-push:
     name: Build & Push Docker Images to GHCR
-    needs: test
+    needs: [test, lint]
     # Only main produces the images that actually get deployed — dev/test
     # pushes still run the test job above, but don't publish to GHCR.
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -142,6 +176,11 @@ jobs:
     # Nota: las imagenes en GHCR se marcan publicas tras el primer push, para
     # que este `docker compose pull` remoto funcione sin login adicional.
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.DEPLOY_ENABLED == 'true'
+    # environment: crea un Deployment real de GitHub por cada corrida, que es
+    # lo que alimenta las metricas de Deployment Frequency / Lead Time for
+    # Changes en el panel de Jira. El nombre "production" es el que las
+    # integraciones DORA reconocen como tier de produccion.
+    environment: production
     runs-on: ubuntu-latest
     steps:
       - name: Deploy over SSH

@@ -2,20 +2,18 @@ import cv2
 import numpy as np
 from utils.drawing import mark_car
 
+
 def detect_and_assign(frame, results, class_list, polygons: dict):
     # Estado de ocupación por área (binario)
     occupancy = {area: 0 for area in polygons}
 
     # Convertir a NumPy solo si es tensor
     detections = results[0].boxes.data
-    if hasattr(detections, 'cpu'):  # torch.Tensor
-        detections = detections.cpu().numpy()
-    else:
-        detections = np.asarray(detections)
+    detections = detections.cpu().numpy() if hasattr(detections, "cpu") else np.asarray(detections)
 
     for x1, y1, x2, y2, _, cls_id in detections:
         cls_id = int(cls_id)
-        if class_list[cls_id] != 'car':
+        if class_list[cls_id] != "car":
             continue
 
         # Centroide

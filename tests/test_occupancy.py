@@ -14,8 +14,8 @@ if OCCUPANCY_SERVICE_ROOT not in sys.path:
 os.environ.setdefault("JWT_SECRET", "test-secret")
 os.environ.setdefault("JWT_ALGORITHM", "HS256")
 
-from fastapi.testclient import TestClient  # noqa: E402
 import main as occupancy_main  # noqa: E402
+from fastapi.testclient import TestClient  # noqa: E402
 
 client = TestClient(occupancy_main.app)
 

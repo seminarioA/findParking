@@ -1,18 +1,16 @@
-import os
-import jwt
-import logging
 import asyncio
-import redis.asyncio as redis
+import logging
+import os
 from contextlib import suppress
 from datetime import datetime
+
+import jwt
+import redis.asyncio as redis
 from fastapi import FastAPI, WebSocket
 from starlette.websockets import WebSocketDisconnect
 
 # Logging de producción
-logging.basicConfig(
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    level=logging.INFO
-)
+logging.basicConfig(format="%(asctime)s - %(levelname)s - %(message)s", level=logging.INFO)
 logger = logging.getLogger("video_service")
 
 # Configuración Redis
@@ -26,7 +24,7 @@ redis_client = redis.Redis(
     db=REDIS_DB,
     socket_timeout=2,
     retry_on_timeout=True,
-    health_check_interval=30
+    health_check_interval=30,
 )
 
 # Configuración JWT
@@ -37,6 +35,7 @@ POLL_INTERVAL = float(os.getenv("VIDEO_POLL_INTERVAL", "0.03"))
 stream_consumers: dict[str, set[asyncio.Queue[bytes]]] = {}
 producer_tasks: dict[str, asyncio.Task] = {}
 state_lock = asyncio.Lock()
+
 
 def verify_jwt_and_get_role(token: str) -> str | None:
     try:
@@ -54,10 +53,13 @@ def verify_jwt_and_get_role(token: str) -> str | None:
         logger.warning(f"Token inválido: {str(e)}")
     return None
 
+
 app = FastAPI()
+
 
 def _stream_key(camera_id: str, key_suffix: str) -> str:
     return f"{camera_id}:{key_suffix}"
+
 
 async def _producer_loop(stream_key: str, redis_key: str) -> None:
     try:
@@ -93,6 +95,7 @@ async def _producer_loop(stream_key: str, redis_key: str) -> None:
         async with state_lock:
             producer_tasks.pop(stream_key, None)
 
+
 async def _register_consumer(camera_id: str, key_suffix: str) -> tuple[str, asyncio.Queue[bytes]]:
     stream_key = _stream_key(camera_id, key_suffix)
     queue: asyncio.Queue[bytes] = asyncio.Queue(maxsize=1)
@@ -105,6 +108,7 @@ async def _register_consumer(camera_id: str, key_suffix: str) -> tuple[str, asyn
             )
     return stream_key, queue
 
+
 async def _unregister_consumer(stream_key: str, queue: asyncio.Queue[bytes]) -> None:
     async with state_lock:
         consumers = stream_consumers.get(stream_key)
@@ -115,7 +119,10 @@ async def _unregister_consumer(stream_key: str, queue: asyncio.Queue[bytes]) -> 
         if not consumers:
             stream_consumers.pop(stream_key, None)
 
-async def handle_video_stream(websocket: WebSocket, camera_id: str, key_suffix: str, allowed_roles: set[str]):
+
+async def handle_video_stream(
+    websocket: WebSocket, camera_id: str, key_suffix: str, allowed_roles: set[str]
+):
     token = websocket.headers.get("sec-websocket-protocol")
     if not token:
         await websocket.close(code=4401)
@@ -144,9 +151,11 @@ async def handle_video_stream(websocket: WebSocket, camera_id: str, key_suffix: 
     finally:
         await _unregister_consumer(stream_key, queue)
 
+
 @app.websocket("/api/video/{camera_id}/processed")
 async def ws_processed(camera_id: str, websocket: WebSocket):
     await handle_video_stream(websocket, camera_id, "processed", {"admin", "gestor"})
+
 
 @app.websocket("/api/video/{camera_id}/raw")
 async def ws_raw(camera_id: str, websocket: WebSocket):

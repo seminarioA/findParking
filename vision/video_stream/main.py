@@ -1,12 +1,14 @@
 # main.py
 
-from fastapi import FastAPI, Response
-from fastapi.responses import StreamingResponse
-from config import VIDEO_PATHS
-from camera_manager import generate_mjpeg_stream
 import os
 
+from camera_manager import generate_mjpeg_stream
+from config import VIDEO_PATHS
+from fastapi import FastAPI, Response
+from fastapi.responses import StreamingResponse
+
 app = FastAPI()
+
 
 @app.get("/stream/{camera_id}")
 def stream_camera(camera_id: str):
@@ -15,6 +17,5 @@ def stream_camera(camera_id: str):
         return Response(status_code=404, content="Video no encontrado")
 
     return StreamingResponse(
-        generate_mjpeg_stream(video_path),
-        media_type="multipart/x-mixed-replace; boundary=frame"
+        generate_mjpeg_stream(video_path), media_type="multipart/x-mixed-replace; boundary=frame"
     )
