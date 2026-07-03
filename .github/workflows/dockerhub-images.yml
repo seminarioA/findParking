@@ -1,4 +1,4 @@
-name: Docker Hub Images CI
+name: CI/CD Pipeline — Test, Build, Push & Deploy
 
 on:
   push:
@@ -12,6 +12,7 @@ permissions:
 
 jobs:
   test:
+    name: Run Backend Unit Tests (pytest)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -38,6 +39,7 @@ jobs:
           pytest tests/ -v
 
   build-and-push:
+    name: Build & Push Docker Images to Docker Hub
     needs: test
     # Only main produces the images that actually get deployed — dev/test
     # pushes still run the test job above, but don't publish to Docker Hub.
@@ -125,6 +127,7 @@ jobs:
           echo "Usa :latest para despliegues flotantes o el tag de commit para fijar versión."
 
   deploy:
+    name: Deploy to Production via SSH
     needs: build-and-push
     # Disabled by default: set the repo variable DEPLOY_ENABLED=true (Settings
     # > Secrets and variables > Actions > Variables) once DEPLOY_HOST,
