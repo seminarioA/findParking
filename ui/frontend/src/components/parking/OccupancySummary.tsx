@@ -38,15 +38,21 @@ export default function OccupancySummary({ summary }: OccupancySummaryProps) {
             <span className="text-muted-foreground">Ocupados</span>
             <span className="font-bold text-destructive">{summary.occupied}</span>
           </div>
-          <div className="w-full bg-muted rounded-full h-3 overflow-hidden">
+          <div
+            className="w-full flex h-2 overflow-hidden border border-border"
+            role="progressbar"
+            aria-valuenow={summary.percentage}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label={`${summary.percentage}% de espacios disponibles`}
+          >
             <div
-              className="h-full bg-gradient-to-r from-success to-primary transition-all duration-500"
+              className="h-full bg-success transition-all duration-500"
               style={{ width: `${summary.percentage}%` }}
-              role="progressbar"
-              aria-valuenow={summary.percentage}
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-label={`${summary.percentage}% de espacios disponibles`}
+            />
+            <div
+              className="h-full bg-destructive transition-all duration-500"
+              style={{ width: `${100 - summary.percentage}%` }}
             />
           </div>
         </div>

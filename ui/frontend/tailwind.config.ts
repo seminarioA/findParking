@@ -64,7 +64,7 @@ export default {
         },
       },
       fontFamily: {
-        sans: ["Public Sans", "system-ui", "sans-serif"],
+        sans: ["Zen Kaku Gothic New", "system-ui", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",
