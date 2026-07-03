@@ -4,6 +4,11 @@ services:
     volumes:
       - redis_data:/data
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
 
   postgres:
     image: postgres:15
@@ -14,6 +19,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-auth_user} -d ${POSTGRES_DB:-auth_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   auth_service:
     image: aleseminario/findparking-services-auth-service:${IMAGE_TAG:-latest}
@@ -22,18 +32,27 @@ services:
     env_file:
       - ../api/auth/.env
     depends_on:
-      - redis
-      - postgres
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
     restart: unless-stopped
     expose:
       - "8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://localhost:8000/docs', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
 
   processing_service:
     image: aleseminario/findparking-services-processing-service:${IMAGE_TAG:-latest}
     environment:
       - REDIS_HOST=redis
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
     restart: unless-stopped
 
   video_service:
@@ -43,11 +62,19 @@ services:
     env_file:
       - ../api/video/.env
     depends_on:
-      - redis
-      - auth_service
+      redis:
+        condition: service_healthy
+      auth_service:
+        condition: service_healthy
     restart: unless-stopped
     expose:
       - "8004"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://localhost:8004/docs', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
 
   occupancy_service:
     image: aleseminario/findparking-services-occupancy-service:${IMAGE_TAG:-latest}
@@ -56,11 +83,19 @@ services:
     env_file:
       - ../api/occupancy/.env
     depends_on:
-      - redis
-      - auth_service
+      redis:
+        condition: service_healthy
+      auth_service:
+        condition: service_healthy
     restart: unless-stopped
     expose:
       - "8002"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://localhost:8002/docs', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
 
   video_stream_service:
     image: aleseminario/findparking-services-video-stream-service:${IMAGE_TAG:-latest}
@@ -69,18 +104,28 @@ services:
     volumes:
       - ../core/resources:/app/resources
     depends_on:
-      - video_service
-      - occupancy_service
-      - auth_service
+      video_service:
+        condition: service_healthy
+      occupancy_service:
+        condition: service_healthy
+      auth_service:
+        condition: service_healthy
     restart: unless-stopped
     expose:
       - "8010"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://localhost:8010/docs', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
 
   frontend_service:
     image: aleseminario/findparking-services-frontend-service:${IMAGE_TAG:-latest}
     restart: unless-stopped
     expose:
       - "80"
+    # Healthcheck already defined in the image's Dockerfile (wget against /).
 
   api_gateway:
     image: nginx:latest
@@ -91,15 +136,15 @@ services:
       - "80:80"
     depends_on:
       frontend_service:
-        condition: service_started
+        condition: service_healthy
       auth_service:
-        condition: service_started
+        condition: service_healthy
       occupancy_service:
-        condition: service_started
+        condition: service_healthy
       video_service:
-        condition: service_started
+        condition: service_healthy
       video_stream_service:
-        condition: service_started
+        condition: service_healthy
     restart: unless-stopped
 
 volumes:
