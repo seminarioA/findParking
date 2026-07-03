@@ -19,8 +19,8 @@ os.close(_db_fd)
 os.environ["DB_URL"] = f"sqlite:///{_db_path}"
 atexit.register(lambda: os.path.exists(_db_path) and os.remove(_db_path))
 
-from fastapi.testclient import TestClient  # noqa: E402
 from app.main import app  # noqa: E402
+from fastapi.testclient import TestClient  # noqa: E402
 
 client = TestClient(app)
 
@@ -83,13 +83,11 @@ def test_verify_endpoint_with_valid_token():
         "/api/auth/register",
         json={"email": email, "password": password, "role": "USUARIO"},
     )
-    token = client.post(
-        "/api/auth/login", json={"email": email, "password": password}
-    ).json()["access_token"]
+    token = client.post("/api/auth/login", json={"email": email, "password": password}).json()[
+        "access_token"
+    ]
 
-    verify_resp = client.get(
-        "/api/auth/verify", headers={"Authorization": f"Bearer {token}"}
-    )
+    verify_resp = client.get("/api/auth/verify", headers={"Authorization": f"Bearer {token}"})
     assert verify_resp.status_code == 200
     body = verify_resp.json()
     assert body["sub"] == email

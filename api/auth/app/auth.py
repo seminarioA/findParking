@@ -1,15 +1,15 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Header, Body
-from sqlalchemy.orm import Session
-from app.schemas import UserCreate, UserLogin, TokenResponse
-from app.models import User
-from app.security import (
-    get_db, hash_password, verify_password,
-    create_access_token, verify_token
-)
-from .blacklist import revoke_token
 import uuid
 
+from app.models import User
+from app.schemas import TokenResponse, UserCreate, UserLogin
+from app.security import create_access_token, get_db, hash_password, verify_password, verify_token
+from fastapi import APIRouter, Body, Depends, Header, HTTPException
+from sqlalchemy.orm import Session
+
+from .blacklist import revoke_token
+
 router = APIRouter(prefix="/api/auth")
+
 
 @router.post("/register")
 def register(user: UserCreate, db: Session = Depends(get_db)):
@@ -20,6 +20,7 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     db.commit()
     return {"msg": "Usuario registrado"}
 
+
 @router.post("/login", response_model=TokenResponse)
 def login(credentials: UserLogin, db: Session = Depends(get_db)):
     user = db.query(User).filter_by(email=credentials.email).first()
@@ -28,6 +29,7 @@ def login(credentials: UserLogin, db: Session = Depends(get_db)):
     jti = str(uuid.uuid4())
     token = create_access_token({"sub": user.email, "role": user.role, "jti": jti})
     return {"access_token": token}
+
 
 @router.post("/logout")
 def logout(Authorization: str = Header(...), db: Session = Depends(get_db)):
@@ -44,18 +46,20 @@ def get_me(Authorization: str = Header(...), db: Session = Depends(get_db)):
     payload = verify_token(token, db)
     return {"email": payload["sub"], "role": payload["role"]}
 
+
 @router.get("/verify")
 def verify(Authorization: str = Header(...), db: Session = Depends(get_db)):
     token = Authorization.split(" ")[1]
     payload = verify_token(token, db)
     return {"sub": payload["sub"], "role": payload["role"]}
 
+
 @router.post("/set-role")
 def set_role(
     email: str = Body(...),
     new_role: str = Body(...),
     Authorization: str = Header(...),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     token = Authorization.split(" ")[1]
     payload = verify_token(token, db)

@@ -1,6 +1,8 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime
-from app.database import Base
 import datetime
+
+from app.database import Base
+from sqlalchemy import Column, DateTime, Integer, String
+
 
 class User(Base):
     __tablename__ = "users"
@@ -8,6 +10,7 @@ class User(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
     role = Column(String, default="USUARIO")
+
 
 class TokenBlacklist(Base):
     __tablename__ = "token_blacklist"

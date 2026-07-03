@@ -6,9 +6,10 @@ Microservicio dedicado al procesamiento de video con YOLO + OpenCV y publicació
 
 import logging
 import threading
+
 from config.loader import load_config
-from core.model import load_model, load_classes
 from core.areas import load_areas
+from core.model import load_classes, load_model
 from services.video_processor import process_video
 from utils.device import get_device
 
@@ -32,7 +33,7 @@ if __name__ == "__main__":
             t = threading.Thread(
                 target=process_video,
                 args=(camera_id, stream_url, model, class_list, areas_config[camera_id], device),
-                daemon=True
+                daemon=True,
             )
             t.start()
             threads.append(t)

@@ -1,5 +1,6 @@
-from sqlalchemy.orm import Session
 from app.models import TokenBlacklist
+from sqlalchemy.orm import Session
+
 
 def revoke_token(jti: str, db: Session):
     db_token = TokenBlacklist(jti=jti)

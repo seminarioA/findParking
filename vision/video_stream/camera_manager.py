@@ -1,10 +1,11 @@
 # camera_manager.py
 
-import cv2
 import time
-from contextlib import closing
+
+import cv2
 from fastapi import HTTPException
 from utils import build_mjpeg_frame
+
 
 def generate_mjpeg_stream(video_path: str):
     cap = cv2.VideoCapture(video_path)
@@ -20,7 +21,7 @@ def generate_mjpeg_stream(video_path: str):
             if not ret:
                 cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
                 continue
-            _, jpeg = cv2.imencode('.jpg', frame)
+            _, jpeg = cv2.imencode(".jpg", frame)
             yield build_mjpeg_frame(jpeg.tobytes())
             time.sleep(delay)
     finally:

@@ -3,16 +3,17 @@ Occupancy Service
 Microservicio para servir estado de ocupación por cámara.
 """
 
-import os
-import logging
-import redis
-import json
-import jwt
 import asyncio
-from fastapi import FastAPI, Depends, HTTPException, WebSocket, WebSocketDisconnect, Query
+import json
+import logging
+import os
+
+import jwt
+import redis
+from dotenv import load_dotenv
+from fastapi import Depends, FastAPI, HTTPException, Query, WebSocket, WebSocketDisconnect
 from fastapi.security import HTTPBearer
 from jwt import PyJWTError
-from dotenv import load_dotenv
 
 # Carga .env
 load_dotenv()
@@ -24,7 +25,7 @@ JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 # Configuración Redis
 REDIS_HOST = os.getenv("REDIS_HOST", "redis")
 REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
-REDIS_DB   = int(os.getenv("REDIS_DB", 0))
+REDIS_DB = int(os.getenv("REDIS_DB", 0))
 
 # Inicialización Redis
 redis_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB)
@@ -36,16 +37,19 @@ logging.basicConfig(level=logging.INFO)
 # Seguridad
 security = HTTPBearer()
 
+
 def verify_jwt(token: str = Depends(security)):
     """Verifica el JWT localmente."""
     try:
         return jwt.decode(token.credentials, JWT_SECRET, algorithms=[JWT_ALGORITHM])
     except PyJWTError as e:
         logger.warning(f"Token inválido: {e}")
-        raise HTTPException(status_code=401, detail="Token inválido o expirado")
+        raise HTTPException(status_code=401, detail="Token inválido o expirado") from e
+
 
 # FastAPI App
 app = FastAPI(title="Occupancy Service", version="1.0")
+
 
 @app.websocket("/api/occupancy/{camera_id}/ws")
 async def occupancy_ws(websocket: WebSocket, camera_id: str, token: str = Query(None)):
@@ -68,7 +72,7 @@ async def occupancy_ws(websocket: WebSocket, camera_id: str, token: str = Query(
                     data = json.loads(raw.decode())
                     summary = {
                         "occupied": sum(1 for v in data.values() if v == 1),
-                        "free":     sum(1 for v in data.values() if v == 0)
+                        "free": sum(1 for v in data.values() if v == 0),
                     }
                     await websocket.send_text(json.dumps({"areas": data, "summary": summary}))
                 except Exception:
@@ -76,6 +80,7 @@ async def occupancy_ws(websocket: WebSocket, camera_id: str, token: str = Query(
             await asyncio.sleep(2)
     except WebSocketDisconnect:
         pass
+
 
 @app.get("/api/occupancy/{camera_id}")
 async def get_occupancy(camera_id: str, user=Depends(verify_jwt)):
@@ -94,15 +99,17 @@ async def get_occupancy(camera_id: str, user=Depends(verify_jwt)):
             data = json.loads(raw.decode())
         except Exception as e:
             logger.error(f"Error deserializando ocupación de {camera_id}: {e}")
-            raise HTTPException(status_code=500, detail="Error deserializando datos")
+            raise HTTPException(status_code=500, detail="Error deserializando datos") from e
 
         summary = {
             "occupied": sum(1 for v in data.values() if v == 1),
-            "free":     sum(1 for v in data.values() if v == 0)
+            "free": sum(1 for v in data.values() if v == 0),
         }
 
         return {"areas": data, "summary": summary}
 
+    except HTTPException:
+        raise
     except Exception as e:
         logger.exception(f"Fallo en /api/occupancy/{camera_id}")
-        raise HTTPException(status_code=500, detail="Error interno en servicio de ocupación")
+        raise HTTPException(status_code=500, detail="Error interno en servicio de ocupación") from e

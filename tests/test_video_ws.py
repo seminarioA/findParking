@@ -60,25 +60,31 @@ def test_video_ws_raw_stream_rejects_disallowed_role():
     # /raw only allows "admin"; "gestor" is valid for /processed but not /raw.
     token = _make_token("gestor")
 
-    with pytest.raises(WebSocketDisconnect):
-        with client.websocket_connect("/api/video/entrada1/raw", subprotocols=[token]) as websocket:
-            websocket.receive_bytes()
+    with (
+        pytest.raises(WebSocketDisconnect),
+        client.websocket_connect("/api/video/entrada1/raw", subprotocols=[token]) as websocket,
+    ):
+        websocket.receive_bytes()
 
 
 def test_video_ws_rejects_missing_token():
     client = TestClient(video_main.app)
 
-    with pytest.raises(WebSocketDisconnect):
-        with client.websocket_connect("/api/video/entrada1/processed") as websocket:
-            websocket.receive_bytes()
+    with (
+        pytest.raises(WebSocketDisconnect),
+        client.websocket_connect("/api/video/entrada1/processed") as websocket,
+    ):
+        websocket.receive_bytes()
 
 
 def test_video_ws_rejects_expired_token():
     client = TestClient(video_main.app)
     token = _make_token("admin", expires_in=timedelta(minutes=-5))
 
-    with pytest.raises(WebSocketDisconnect):
-        with client.websocket_connect(
+    with (
+        pytest.raises(WebSocketDisconnect),
+        client.websocket_connect(
             "/api/video/entrada1/processed", subprotocols=[token]
-        ) as websocket:
-            websocket.receive_bytes()
+        ) as websocket,
+    ):
+        websocket.receive_bytes()
