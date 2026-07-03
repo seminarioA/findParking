@@ -1,11 +1,10 @@
 @startuml pipeline-technology-architecture
-!theme cerulean
-skinparam node {
-  BackgroundColor White
-  BorderColor DarkBlue
-}
+skinparam monochrome true
+skinparam shadowing false
+skinparam backgroundColor White
+skinparam defaultFontColor Black
 
-title Arquitectura Tecnológica del Pipeline CI/CD — findParking (TOGAF Fase D)
+title Arquitectura Tecnológica del Pipeline CI/CD — findParking
 
 actor "Desarrollador" as dev
 
