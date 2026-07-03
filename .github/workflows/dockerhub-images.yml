@@ -2,9 +2,9 @@ name: Docker Hub Images CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "dev", "test" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "dev", "test" ]
   workflow_dispatch:
 
 permissions:
@@ -39,6 +39,9 @@ jobs:
 
   build-and-push:
     needs: test
+    # Only main produces the images that actually get deployed — dev/test
+    # pushes still run the test job above, but don't publish to Docker Hub.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment: DevOps
     runs-on: ubuntu-latest
     steps:
