@@ -1,2 +1,7 @@
 __pycache__/
 *.pyc
+
+# Environment files (use .env.example as the template)
+.env
+.env.*
+!.env.example
