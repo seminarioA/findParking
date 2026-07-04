@@ -42,6 +42,8 @@
 
 ![findParking preview on desktop, tablet and mobile](docs/hero-banner.png)
 
+<p align="center"><sub>Frames de dispositivos: <a href="https://github.com/pixelsign/html5-device-mockups">pixelsign/html5-device-mockups</a> (MIT).</sub></p>
+
 ## Tabla de contenido
 
 - [Acerca de](#acerca-de)
