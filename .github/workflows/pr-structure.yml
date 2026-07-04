@@ -1,0 +1,60 @@
+name: PR Structure
+
+# Valida la estructura obligatoria de cada Pull Request:
+#  - el TITULO del PR debe seguir Conventional Commits (amannn/action-semantic-pull-request)
+#  - cada MENSAJE DE COMMIT del PR debe seguir Conventional Commits (wagoid/commitlint-github-action)
+# Ambos jobs se marcan como checks requeridos en la proteccion de rama de `main`.
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  pr-title:
+    name: Validate PR title (Conventional Commits)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validar titulo del PR
+        uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # Tipos permitidos (incluye `security`, ya usado en el historial del repo).
+          types: |
+            feat
+            fix
+            docs
+            style
+            refactor
+            perf
+            test
+            build
+            ci
+            chore
+            revert
+            security
+          # El scope es opcional: `fix:` o `fix(frontend):` ambos validos.
+          requireScope: false
+          # No exigir que el subject empiece en mayuscula/minuscula concreta.
+          subjectPattern: ^(?![A-Z]).+$
+          subjectPatternError: |
+            El subject "{subject}" del titulo del PR debe empezar en minuscula.
+            Ej: "fix(frontend): corrige barra de ocupacion" (no "Fix ...").
+
+  commit-messages:
+    name: Validate commit messages (commitlint)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Validar mensajes de commit
+        uses: wagoid/commitlint-github-action@v6
+        with:
+          configFile: .commitlintrc.json
+          failOnWarnings: false
