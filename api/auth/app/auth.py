@@ -15,7 +15,9 @@ router = APIRouter(prefix="/api/auth")
 def register(user: UserCreate, db: Session = Depends(get_db)):
     if db.query(User).filter_by(email=user.email).first():
         raise HTTPException(status_code=400, detail="Email ya registrado")
-    new_user = User(email=user.email, hashed_password=hash_password(user.password), role=user.role)
+    # El rol se fuerza en el servidor: el registro es público y no debe permitir
+    # elegir rol (evita escalada de privilegios anónima). (TICKET-71)
+    new_user = User(email=user.email, hashed_password=hash_password(user.password), role="USUARIO")
     db.add(new_user)
     db.commit()
     return {"msg": "Usuario registrado"}

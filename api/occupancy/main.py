@@ -19,7 +19,15 @@ from jwt import PyJWTError
 load_dotenv()
 
 # Configuración JWT
-JWT_SECRET = os.getenv("JWT_SECRET", "CHANGE_THIS_SECRET")
+# Falla al arrancar si el secreto no está configurado o es débil, en vez de
+# caer a un valor por defecto público que permitiría forjar tokens. Debe ser el
+# mismo secreto que auth/video. Generar con: openssl rand -hex 32 (TICKET-74)
+JWT_SECRET = os.getenv("JWT_SECRET")
+if not JWT_SECRET or len(JWT_SECRET) < 32:
+    raise RuntimeError(
+        "JWT_SECRET no está configurado o es demasiado corto (<32 caracteres); "
+        "no se permiten valores por defecto."
+    )
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 
 # Configuración Redis

@@ -1,7 +1,11 @@
 import asyncio
+import os
 from contextlib import suppress
 
-from api.video import main as video_main
+# main.py valida JWT_SECRET (>=32) al importar; setearlo antes del import.
+os.environ.setdefault("JWT_SECRET", "test-secret-must-be-at-least-32-bytes-long")
+
+from api.video import main as video_main  # noqa: E402
 
 
 class DummyRedis:

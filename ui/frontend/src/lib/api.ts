@@ -20,6 +20,7 @@ function getHost() {
 
 export const endpoints = {
   // Auth
+  register: () => `${API_BASE}/auth/register`,
   login: () => `${API_BASE}/auth/login`,
   me: () => `${API_BASE}/auth/me`,
   verify: () => `${API_BASE}/auth/verify`,

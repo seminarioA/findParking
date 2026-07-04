@@ -10,7 +10,7 @@ REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
 
-os.environ.setdefault("JWT_SECRET", "test-secret")
+os.environ.setdefault("JWT_SECRET", "test-secret-must-be-at-least-32-bytes-long")
 
 from fastapi.testclient import TestClient  # noqa: E402
 
@@ -30,7 +30,7 @@ class DummyRedis:
 
 def _make_token(role: str, expires_in=timedelta(minutes=5)):
     payload = {"role": role, "exp": datetime.utcnow() + expires_in}
-    return pyjwt.encode(payload, "test-secret", algorithm="HS256")
+    return pyjwt.encode(payload, os.environ["JWT_SECRET"], algorithm="HS256")
 
 
 @pytest.fixture(autouse=True)

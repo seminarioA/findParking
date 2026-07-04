@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import type { User } from '@/types/auth';
+import { apiPost, endpoints } from '@/lib/api';
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -32,22 +33,48 @@ export default function Register() {
     setIsLoading(true);
 
     try {
-      // Simulación de registro - reemplazar con API real
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      
-      const mockUser: User = {
-        id: '1',
-        name: formData.name,
+      // 1) Crear la cuenta real en el backend. El servidor fuerza el rol a
+      //    USUARIO; no se envía rol desde el cliente. (TICKET-72 / TICKET-71)
+      await apiPost(endpoints.register(), {
         email: formData.email,
-        role: 'user',
-        vehicle: formData.vehicle,
+        password: formData.password,
+      });
+
+      // 2) Login real para obtener un JWT válido (el registro no devuelve token).
+      const { access_token } = await apiPost<
+        { email: string; password: string },
+        { access_token: string }
+      >(endpoints.login(), {
+        email: formData.email,
+        password: formData.password,
+      });
+
+      // 3) Obtener el rol real desde el token.
+      let role = 'user';
+      try {
+        const me = await fetch(endpoints.me(), {
+          headers: { Authorization: `Bearer ${access_token}` },
+        }).then((r) => (r.ok ? r.json() : null));
+        if (me?.role) role = me.role;
+      } catch {
+        // continuar con rol por defecto
+      }
+
+      const user: User = {
+        id: formData.email,
+        name: formData.name || formData.email.split('@')[0],
+        email: formData.email,
+        role: role as User['role'],
+        vehicle: formData.vehicle || undefined,
       };
 
-      login('mock-jwt-token', mockUser);
+      login(access_token, user);
       toast.success('¡Cuenta creada exitosamente!');
       navigate('/');
     } catch (error) {
-      toast.error('Error al crear la cuenta');
+      const alreadyExists =
+        error instanceof Error && error.message.includes('HTTP 400');
+      toast.error(alreadyExists ? 'Ese correo ya está registrado' : 'Error al crear la cuenta');
     } finally {
       setIsLoading(false);
     }
