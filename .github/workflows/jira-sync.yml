@@ -1,0 +1,42 @@
+name: Jira to GitHub Sync
+
+# Sincronizacion automatica Jira -> GitHub issues.
+#   - schedule: reconciliacion cada 15 min (red de seguridad).
+#   - repository_dispatch (jira-sync): disparo instantaneo desde una regla de
+#     Automation de Jira (ver .github/JIRA_SYNC.md) -> sync "en vivo".
+#   - workflow_dispatch: ejecucion manual desde la pestana Actions.
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  repository_dispatch:
+    types: [jira-sync]
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+concurrency:
+  group: jira-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Jira -> GitHub
+    runs-on: ubuntu-latest
+    # Deshabilitado por defecto (mismo patron que DEPLOY_ENABLED / SONARQUBE_ENABLED).
+    # Activar: crear la variable de repo JIRA_SYNC_ENABLED=true y los secretos
+    # JIRA_BASE_URL, JIRA_EMAIL, JIRA_API_TOKEN. Ver .github/JIRA_SYNC.md
+    if: vars.JIRA_SYNC_ENABLED == 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Sync Jira -> GitHub issues
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_EMAIL: ${{ secrets.JIRA_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: python3 .github/scripts/jira_github_sync.py
