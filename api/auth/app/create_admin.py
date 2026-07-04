@@ -31,8 +31,9 @@ def crear_admin_inicial() -> None:
         return
 
     if len(password) < MIN_PASSWORD_LEN:
+        # Mensaje sin interpolar el valor de la contraseña ni nada derivado de ella.
         print(
-            f"INITIAL_ADMIN_PASSWORD demasiado corta (<{MIN_PASSWORD_LEN} caracteres); "
+            "INITIAL_ADMIN_PASSWORD no cumple la longitud mínima; "
             "abortando la creación del admin inicial."
         )
         return
@@ -47,7 +48,9 @@ def crear_admin_inicial() -> None:
         print(f"Admin inicial creado: {email}")
     except Exception as e:
         db.rollback()
-        print(f"Error creando el admin inicial: {e}")
+        # Se registra solo el tipo de excepción para no arrastrar datos
+        # sensibles (p. ej. la contraseña vía hash_password) al log.
+        print(f"Error creando el admin inicial: {type(e).__name__}")
     finally:
         db.close()
 
