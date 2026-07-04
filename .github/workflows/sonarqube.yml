@@ -1,0 +1,39 @@
+name: SonarQube
+
+on:
+  push:
+    branches: [main, dev, test]
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  sonarqube:
+    name: SonarQube Scan
+    runs-on: ubuntu-latest
+    # Deshabilitado por defecto (mismo patrón que DEPLOY_ENABLED en
+    # ci-cd-pipeline.yml). Para activarlo:
+    #   1. Settings > Secrets and variables > Actions > Variables:
+    #      crear SONARQUBE_ENABLED = true
+    #   2. Secrets: crear SONAR_TOKEN (y SONAR_HOST_URL si es SonarQube Server
+    #      self-hosted; no hace falta para SonarQube Cloud).
+    # Se salta en PRs desde forks (no tienen acceso a los secretos).
+    if: >-
+      vars.SONARQUBE_ENABLED == 'true' &&
+      (github.event_name != 'pull_request' ||
+       github.event.pull_request.head.repo.full_name == github.repository)
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          # Clon completo: mejora la relevancia del reporte (blame / new code).
+          fetch-depth: 0
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v8
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          # Requerido solo para SonarQube Server self-hosted (no para Cloud):
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
