@@ -11,7 +11,7 @@ if OCCUPANCY_SERVICE_ROOT not in sys.path:
     sys.path.insert(0, OCCUPANCY_SERVICE_ROOT)
 
 # main.py reads these via os.getenv() at import time.
-os.environ.setdefault("JWT_SECRET", "test-secret")
+os.environ.setdefault("JWT_SECRET", "test-secret-must-be-at-least-32-bytes-long")
 os.environ.setdefault("JWT_ALGORITHM", "HS256")
 
 import main as occupancy_main  # noqa: E402
@@ -30,7 +30,7 @@ class DummyRedis:
 
 
 def _make_token():
-    return pyjwt.encode({"sub": "tester"}, "test-secret", algorithm="HS256")
+    return pyjwt.encode({"sub": "tester"}, os.environ["JWT_SECRET"], algorithm="HS256")
 
 
 def test_occupancy_without_token_fails():

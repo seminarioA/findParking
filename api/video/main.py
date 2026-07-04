@@ -28,7 +28,15 @@ redis_client = redis.Redis(
 )
 
 # Configuración JWT
-JWT_SECRET = os.getenv("JWT_SECRET", "CHANGE_ME")
+# Falla al arrancar si el secreto no está configurado o es débil, en vez de
+# caer a un valor por defecto público que permitiría forjar tokens. Debe ser el
+# mismo secreto que auth/occupancy. Generar con: openssl rand -hex 32 (TICKET-74)
+JWT_SECRET = os.getenv("JWT_SECRET")
+if not JWT_SECRET or len(JWT_SECRET) < 32:
+    raise RuntimeError(
+        "JWT_SECRET no está configurado o es demasiado corto (<32 caracteres); "
+        "no se permiten valores por defecto."
+    )
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 
 POLL_INTERVAL = float(os.getenv("VIDEO_POLL_INTERVAL", "0.03"))

@@ -10,7 +10,7 @@ if AUTH_SERVICE_ROOT not in sys.path:
 
 # app.config reads these via os.getenv() at import time, so they must be set
 # before the first `import app.*` below.
-os.environ.setdefault("JWT_SECRET", "test-secret")
+os.environ.setdefault("JWT_SECRET", "test-secret-must-be-at-least-32-bytes-long")
 os.environ.setdefault("SECRET_KEY", "test-secret")
 os.environ.setdefault("ACCESS_TOKEN_EXPIRE_MINUTES", "60")
 
