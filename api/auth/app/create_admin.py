@@ -1,44 +1,56 @@
+"""Provisiona un único admin inicial a partir de variables de entorno.
+
+Antes este script sembraba 4 cuentas admin con la contraseña igual al usuario,
+hardcodeadas en el repo y recreadas en cada arranque (credenciales públicas).
+Ahora no hay credenciales en el código: solo crea un admin si se definen
+INITIAL_ADMIN_EMAIL e INITIAL_ADMIN_PASSWORD (con una contraseña razonable), y
+solo si ese usuario no existe todavía. Sin esas variables, es un no-op seguro.
+(TICKET-73)
+"""
+
+import os
+
 from .database import SessionLocal, engine
 from .models import Base, User
 from .security import hash_password
 
 Base.metadata.create_all(bind=engine)
 
-usuarios = [
-    ("U22203099@utp.edu.pe", "U22203099", "admin"),
-    ("U22247409@utp.edu.pe", "U22247409", "admin"),
-    ("U22209965@utp.edu.pe", "U22209965", "admin"),
-    ("U22247454@utp.edu.pe", "U22247454", "admin"),
-]
+MIN_PASSWORD_LEN = 12
 
 
-def crear_usuarios(lista_usuarios):
+def crear_admin_inicial() -> None:
+    email = os.getenv("INITIAL_ADMIN_EMAIL")
+    password = os.getenv("INITIAL_ADMIN_PASSWORD")
+
+    if not email or not password:
+        print(
+            "INITIAL_ADMIN_EMAIL/INITIAL_ADMIN_PASSWORD no definidos; "
+            "no se crea ningún admin inicial."
+        )
+        return
+
+    if len(password) < MIN_PASSWORD_LEN:
+        print(
+            f"INITIAL_ADMIN_PASSWORD demasiado corta (<{MIN_PASSWORD_LEN} caracteres); "
+            "abortando la creación del admin inicial."
+        )
+        return
+
     db = SessionLocal()
     try:
-        for email, password, role in lista_usuarios:
-            existente = db.query(User).filter_by(email=email).first()
-            if existente:
-                existente_id = getattr(existente, "id", "desconocido")
-                print(f"El usuario con email '{email}' ya existe. (id: {existente_id})")
-                continue
-
-            hashed = hash_password(password)
-
-            nuevo = User(email=email, hashed_password=hashed, role=role)
-            db.add(nuevo)
-
-            try:
-                db.commit()
-                print(f"Usuario creado: {email} (rol: {role})")
-            except Exception as e_commit:
-                db.rollback()
-                print(f"Error al crear usuario {email}: {e_commit}")
-
+        if db.query(User).filter_by(email=email).first():
+            print(f"El usuario '{email}' ya existe; no se recrea.")
+            return
+        db.add(User(email=email, hashed_password=hash_password(password), role="admin"))
+        db.commit()
+        print(f"Admin inicial creado: {email}")
     except Exception as e:
-        print("Error durante el proceso de creación de usuarios:", e)
+        db.rollback()
+        print(f"Error creando el admin inicial: {e}")
     finally:
         db.close()
 
 
 if __name__ == "__main__":
-    crear_usuarios(usuarios)
+    crear_admin_inicial()
